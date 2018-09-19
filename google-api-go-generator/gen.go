@@ -25,7 +25,7 @@ import (
 	"strings"
 	"unicode"
 
-	"google.golang.org/api/google-api-go-generator/internal/disco"
+	"github.com/nilleb/google-api-go-client/google-api-go-generator/internal/disco"
 )
 
 const (
