@@ -1,0 +1,2764 @@
+{
+  "version": "v1beta1",
+  "baseUrl": "https://cloudsearch.googleapis.com/",
+  "servicePath": "",
+  "description": "Cloud Search provides cloud-based search capabilities over G Suite data.  The Cloud Search API allows indexing of non-G Suite data into Cloud Search.",
+  "kind": "discovery#restDescription",
+  "basePath": "",
+  "id": "cloudsearch:v1beta1",
+  "documentationLink": "https://gsuite.google.com/products/cloud-search/",
+  "revision": "20180905",
+  "discoveryVersion": "v1",
+  "version_module": true,
+  "schemas": {
+    "EnumOperatorOptions": {
+      "description": "Used to provide a search operator for enum properties. This is\noptional. Search operators let users restrict the query to specific fields\nrelevant to the type of item being searched. For example, if you provide no\noperator for a *priority* enum property with possible values *p0* and *p1*,\na query that contains the term *p0* will return items that have *p0* as the\nvalue of the *priority* property, as well as any items that contain the\nstring *p0* in other fields. If you provide an operator name for the enum,\nsuch as *priority*, then search users can use that operator to refine\nresults to only items that have *p0* as this property's value, with the\nquery *priority:p0*.",
+      "type": "object",
+      "properties": {
+        "operatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\nenum property. For example, if operatorName is *priority* and the\nproperty's name is *priorityVal*, then queries like\n*priority:&lt;value&gt;* will show results only where the value of the\nproperty named *priorityVal* matches *&lt;value&gt;*. By contrast, a\nsearch that uses the same *&lt;value&gt;* without an operator will return\nall items where *&lt;value&gt;* matches the value of any String\nproperties or text within the content field for the item.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        }
+      },
+      "id": "EnumOperatorOptions"
+    },
+    "PollItemsRequest": {
+      "properties": {
+        "queue": {
+          "description": "Queue name to fetch items from.  If unspecified, PollItems will\nfetch from 'default' queue.\nThe maximum length is 100 characters.",
+          "type": "string"
+        },
+        "limit": {
+          "description": "Maximum number of items to return.\n\u003cbr /\u003eThe maximum and the default value is 1000",
+          "format": "int32",
+          "type": "integer"
+        },
+        "statusCodes": {
+          "enumDescriptions": [
+            "Input-only value.  Used with\nItems.list\nto list all items in the queue, regardless of status.",
+            "Error encountered by Cloud Search while processing this item.\nDetails of the error are in\nrepositoryError.",
+            "Item has been modified in the repository, and is out of date with\nthe version previously accepted into Cloud Search.",
+            "Item is known to exist in the repository, but is not yet accepted by\nCloud Search.\nAn item can be in this state when\nItems.push\nhas been called for\nan item of this name that did not exist previously.",
+            "API has accepted the up-to-date data of this item."
+          ],
+          "description": "Limit the items polled to the ones with these statuses.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "CODE_UNSPECIFIED",
+              "ERROR",
+              "MODIFIED",
+              "NEW_ITEM",
+              "ACCEPTED"
+            ]
+          }
+        }
+      },
+      "id": "PollItemsRequest",
+      "type": "object"
+    },
+    "QuerySuggestion": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "GENERIC",
+            "HISTORY"
+          ],
+          "description": "Type of the suggestion.",
+          "type": "string",
+          "enumDescriptions": [
+            "Suggestion from documents in corpus.",
+            "Personal query history."
+          ]
+        },
+        "suggestion": {
+          "description": "Suggested query.",
+          "type": "string"
+        }
+      },
+      "id": "QuerySuggestion",
+      "description": "A completed query suggestion."
+    },
+    "SearchResponse": {
+      "description": "The search API response.",
+      "type": "object",
+      "properties": {
+        "facetResults": {
+          "description": "Repeated facet results.",
+          "type": "array",
+          "items": {
+            "$ref": "FacetResult"
+          }
+        },
+        "hasMoreResults": {
+          "description": "Whether there are more search results matching the query.",
+          "type": "boolean"
+        },
+        "queryInterpretation": {
+          "$ref": "QueryInterpretation",
+          "description": "Query interpretation result for user query. Empty if query parsing is\ndisabled."
+        },
+        "results": {
+          "description": "Results from a search query.",
+          "type": "array",
+          "items": {
+            "$ref": "SearchResult"
+          }
+        }
+      },
+      "id": "SearchResponse"
+    },
+    "ObjectDefinition": {
+      "description": "The definition for an object within a data source.",
+      "type": "object",
+      "properties": {
+        "options": {
+          "$ref": "ObjectOptions",
+          "description": "The optional object-specific options."
+        },
+        "propertyDefinitions": {
+          "description": "The property definitions for the object.\nThe maximum number of elements is 1000.",
+          "type": "array",
+          "items": {
+            "$ref": "PropertyDefinition"
+          }
+        },
+        "name": {
+          "description": "Name for the object, which then defines its type. Item indexing requests\nshould set the\nobjectType field\nequal to this value. For example, if *name* is *Document*, then indexing\nrequests for items of type Document should set\nobjectType equal to\n*Document*. Each object definition must be uniquely named within a schema.\nThe name must start with a letter and can only contain letters (A-Z, a-z)\nor numbers (0-9).\nThe maximum length is 256 characters.",
+          "type": "string"
+        }
+      },
+      "id": "ObjectDefinition"
+    },
+    "FreshnessOptions": {
+      "description": "Indicates which freshness property to use when adjusting search ranking for\nan item. Fresher, more recent dates indicate higher quality. Use the\nfreshness option property that best works with your data. For fileshare\ndocuments, last modified time is most relevant. For calendar event data,\nthe time when the event occurs is a more relevant freshness indicator. In\nthis way, calendar events that occur closer to the time of the search query\nare considered higher quality and ranked accordingly.",
+      "type": "object",
+      "properties": {
+        "secsWhenStale": {
+          "description": "The duration (in seconds) after which an object should be considered\nstale.",
+          "format": "google-duration",
+          "type": "string"
+        },
+        "freshnessProperty": {
+          "description": "This property indicates the freshness level of the object in the index.\nIf set, this property must be a\ntimestamp type.\nOtherwise, the Indexing API uses\nlastModifiedTime\nas the freshness indicator.\nThe maximum length is 256 characters.",
+          "type": "string"
+        }
+      },
+      "id": "FreshnessOptions"
+    },
+    "UploadItemRef": {
+      "properties": {
+        "resourceName": {
+          "description": "Name of the content reference.\nThe maximum length is 2048 characters.",
+          "type": "string"
+        }
+      },
+      "id": "UploadItemRef",
+      "description": "Represents an upload session reference.\nThis reference is created via upload\nmethod.\nUpdating of item content may refer to this uploaded content via\ncontentDataRef.",
+      "type": "object"
+    },
+    "EmailAddress": {
+      "description": "A person's email address.",
+      "type": "object",
+      "properties": {
+        "emailAddress": {
+          "description": "The email address.",
+          "type": "string"
+        }
+      },
+      "id": "EmailAddress"
+    },
+    "QueryItem": {
+      "type": "object",
+      "properties": {
+        "isSynthetic": {
+          "description": "True if the text was generated by means other than a previous user search.",
+          "type": "boolean"
+        }
+      },
+      "id": "QueryItem",
+      "description": "Information relevant only to a query entry."
+    },
+    "ItemContent": {
+      "description": "Content of an item to be indexed and surfaced by Cloud Search.",
+      "type": "object",
+      "properties": {
+        "contentFormat": {
+          "enum": [
+            "UNSPECIFIED",
+            "HTML",
+            "TEXT",
+            "RAW"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "Invalid value.",
+            "contentFormat is HTML.",
+            "contentFormat is free text.",
+            "contentFormat is raw bytes."
+          ]
+        },
+        "hash": {
+          "description": "Hashing info calculated and provided by the API client for content.\nCan be used with the items.push method to calculate modified state.\nThe maximum length is 2048 characters.",
+          "type": "string"
+        },
+        "inlineContent": {
+          "description": "Content that is supplied inlined within the update method.\nThe maximum length is 102400 bytes (100 KiB).",
+          "format": "byte",
+          "type": "string"
+        },
+        "contentDataRef": {
+          "description": "Upload reference ID of a previously uploaded content via write method.",
+          "$ref": "UploadItemRef"
+        }
+      },
+      "id": "ItemContent"
+    },
+    "PushItem": {
+      "description": "Represents an item to be pushed to the indexing queue.",
+      "type": "object",
+      "properties": {
+        "payload": {
+          "description": "Provides additional document state information for the connector,\nsuch as an alternate repository ID and other metadata.\nThe maximum length is 8192 bytes.",
+          "format": "byte",
+          "type": "string"
+        },
+        "repositoryError": {
+          "$ref": "RepositoryError",
+          "description": "Populate this field to store Connector or repository error details.\nThis information is displayed in the Admin Console.\nThis field may only be populated when the\nType is\nREPOSITORY_ERROR."
+        },
+        "type": {
+          "enumDescriptions": [
+            "Default UNSPECIFIED.  Specifies that the push operation should not modify\nItemStatus",
+            "Indicates that the repository document has been modified or updated since\nthe previous\nindex\ncall. This changes status to\nMODIFIED state for\nan existing item. If this is called on a non existing item, the status is\nchanged to\nNEW_ITEM.",
+            "Item in the repository has not been modified since the last update\ncall.  This push operation will set status to\nACCEPTED state.",
+            "Connector is facing a repository error regarding this item.  Change\nstatus to\nERROR\nstate. Item is unreserved and rescheduled at a future time determined by\nexponential backoff.",
+            "Call push with REQUEUE only for items that have been reserved.\nThis action unreserves the item and resets its available time to the\nwall clock time."
+          ],
+          "enum": [
+            "UNSPECIFIED",
+            "MODIFIED",
+            "NOT_MODIFIED",
+            "REPOSITORY_ERROR",
+            "REQUEUE"
+          ],
+          "description": "The type of the push operation that defines the push behavior.",
+          "type": "string"
+        },
+        "structuredDataHash": {
+          "description": "Structured data hash of the item according to the repository. If specified,\nthis is used to determine how to modify this item's status. Setting this\nfield and the type field\nresults in argument error.\nThe maximum length is 2048 characters.",
+          "type": "string"
+        },
+        "queue": {
+          "description": "Queue to which this item belongs to.  The \u003ccode\u003edefault\u003c/code\u003e queue is\nchosen if this field is not specified. The maximum length is\n512 characters.",
+          "type": "string"
+        },
+        "contentHash": {
+          "description": "Content hash of the item according to the repository. If specified, this is\nused to determine how to modify this\nitem's status. Setting this field and the\ntype field results in argument\nerror.\nThe maximum length is 2048 characters.",
+          "type": "string"
+        },
+        "metadataHash": {
+          "description": "Metadata hash of the item according to the repository. If specified, this\nis used to determine how to modify this\nitem's status. Setting this field and the\ntype field results in argument\nerror.\nThe maximum length is 2048 characters.",
+          "type": "string"
+        }
+      },
+      "id": "PushItem"
+    },
+    "Date": {
+      "description": "Represents a whole calendar date, for example a date of birth. The time of day and time zone are either specified elsewhere or are not significant. The date is relative to the [Proleptic Gregorian Calendar](https://en.wikipedia.org/wiki/Proleptic_Gregorian_calendar). The date must be a valid calendar date between the year 1 and 9999.",
+      "type": "object",
+      "properties": {
+        "year": {
+          "description": "Year of date. Must be from 1 to 9999.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "day": {
+          "description": "Day of month. Must be from 1 to 31 and valid for the year and month.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "month": {
+          "description": "Month of year. Must be from 1 to 12, or 0 if specifying a date without a\nmonth.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "id": "Date"
+    },
+    "TimestampOperatorOptions": {
+      "id": "TimestampOperatorOptions",
+      "description": "Used to provide a search operator for timestamp properties. This is\noptional. Search operators let users restrict the query to specific fields\nrelevant to the type of item being searched.",
+      "type": "object",
+      "properties": {
+        "lessThanOperatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\ntimestamp property using the less-than operator. For example, if\nlessThanOperatorName is *closedbefore* and the property's name is\n*closeDate*, then queries like *closedbefore:&lt;value&gt;* will\nshow results only where the value of the property named *closeDate* is\nearlier than *&lt;value&gt;*.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        },
+        "operatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\ntimestamp property. For example, if operatorName is *closedon* and the\nproperty's name is *closeDate*, then queries like\n*closedon:&lt;value&gt;* will show results only where the value of the\nproperty named *closeDate* matches *&lt;value&gt;*. By contrast, a\nsearch that uses the same *&lt;value&gt;* without an operator will return\nall items where *&lt;value&gt;* matches the value of any String properties\nor text within the content field for the item.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        },
+        "greaterThanOperatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\ntimestamp property using the greater-than operator. For example, if\ngreaterThanOperatorName is *closedafter* and the property's name is\n*closeDate*, then queries like *closedafter:&lt;value&gt;* will\nshow results only where the value of the property named *closeDate* is\nlater than *&lt;value&gt;*.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        }
+      }
+    },
+    "SearchResult": {
+      "description": "Results containing indexed information for a document.",
+      "type": "object",
+      "properties": {
+        "metadata": {
+          "$ref": "Metadata",
+          "description": "Metadata of the search result."
+        },
+        "url": {
+          "description": "The URL of the result.",
+          "type": "string"
+        },
+        "snippet": {
+          "$ref": "Snippet",
+          "description": "The concatenation of all snippets (summaries) available for this result."
+        },
+        "title": {
+          "description": "Title of the search result.",
+          "type": "string"
+        }
+      },
+      "id": "SearchResult"
+    },
+    "Empty": {
+      "description": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:\n\n    service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "type": "object",
+      "properties": {},
+      "id": "Empty"
+    },
+    "DoubleValues": {
+      "id": "DoubleValues",
+      "description": "List of double values.",
+      "type": "object",
+      "properties": {
+        "values": {
+          "description": "The maximum number of elements is 100.",
+          "type": "array",
+          "items": {
+            "format": "double",
+            "type": "number"
+          }
+        }
+      }
+    },
+    "ListDataSourceResponse": {
+      "properties": {
+        "nextPageToken": {
+          "description": "Token to retrieve the next page of results, or empty if there are no\nmore results in the list.",
+          "type": "string"
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "$ref": "DataSource"
+          }
+        }
+      },
+      "id": "ListDataSourceResponse",
+      "type": "object"
+    },
+    "ObjectValues": {
+      "description": "List of object values.",
+      "type": "object",
+      "properties": {
+        "values": {
+          "description": "The maximum number of elements is 100.",
+          "type": "array",
+          "items": {
+            "$ref": "StructuredDataObject"
+          }
+        }
+      },
+      "id": "ObjectValues"
+    },
+    "DateValues": {
+      "description": "List of date values.",
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "Date"
+          },
+          "description": "The maximum number of elements is 100."
+        }
+      },
+      "id": "DateValues"
+    },
+    "PeoplePhotoOptions": {
+      "id": "PeoplePhotoOptions",
+      "description": "Options to control photos object in person.",
+      "type": "object",
+      "properties": {
+        "peoplePhotoUrlSizeInPx": {
+          "description": "The image size in pixels of photo_url for Person.",
+          "format": "int32",
+          "type": "integer"
+        }
+      }
+    },
+    "Source": {
+      "description": "Defines sources for the suggest/search APIs.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "Source name for content indexed by the\nIndexing API",
+          "type": "string"
+        },
+        "predefinedSource": {
+          "enumDescriptions": [
+            "Default source. Used for suggest API only. Ignored in search API.",
+            "People source. Used for suggest API only. Ignored in search API.",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ],
+          "enum": [
+            "GENERIC",
+            "PEOPLE",
+            "GOOGLE_DRIVE",
+            "GOOGLE_GMAIL",
+            "GOOGLE_SITES",
+            "GOOGLE_GROUPS",
+            "GOOGLE_CALENDAR",
+            "GOOGLE_KEEP"
+          ],
+          "description": "Predefined content source for Google Apps.",
+          "type": "string"
+        }
+      },
+      "id": "Source"
+    },
+    "SearchSourceOptions": {
+      "type": "object",
+      "properties": {
+        "filterOptions": {
+          "type": "array",
+          "items": {
+            "$ref": "FilterOptions"
+          },
+          "description": "Retrictions applied to this source.\nThe maximum number of elements is 20."
+        },
+        "source": {
+          "$ref": "Source",
+          "description": "The source of the search."
+        }
+      },
+      "id": "SearchSourceOptions",
+      "description": "Configure a source to query the search API."
+    },
+    "Metadata": {
+      "description": "Metadata of a matched search result.",
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "Source",
+          "description": "The named source for the result, such as Gmail."
+        },
+        "createTime": {
+          "description": "The creation time for this document or object in the search result.",
+          "format": "google-datetime",
+          "type": "string"
+        },
+        "fields": {
+          "description": "Indexed fields in structured data, returned as a generic named property.",
+          "type": "array",
+          "items": {
+            "$ref": "NamedProperty"
+          }
+        },
+        "updateTime": {
+          "description": "The last modified date for the object in the search result.",
+          "format": "google-datetime",
+          "type": "string"
+        },
+        "owner": {
+          "description": "Owner (usually creator) of the document or object of the search result.",
+          "$ref": "Person"
+        },
+        "thumbnailUrl": {
+          "description": "The thumbnail URL of the result.",
+          "type": "string"
+        },
+        "mimeType": {
+          "description": "Mime type of the search result.",
+          "type": "string"
+        }
+      },
+      "id": "Metadata"
+    },
+    "MatchRange": {
+      "description": "Matched range of a snippet [start, end).",
+      "type": "object",
+      "properties": {
+        "start": {
+          "description": "Starting position of the match in the snippet.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "end": {
+          "description": "End of the match in the snippet.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "id": "MatchRange"
+    },
+    "SuggestResult": {
+      "description": "One suggestion result.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The name of the suggestion.",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "DEFAULT",
+            "HISTORY"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "Suggestion with default type.",
+            "Personal query history."
+          ]
+        },
+        "querySuggestion": {
+          "$ref": "QuerySuggestion"
+        },
+        "suggestedQuery": {
+          "description": "The suggested query that will be used for search, when the user\nclicks on the suggestion",
+          "type": "string"
+        },
+        "peopleSuggestion": {
+          "$ref": "PeopleSuggestion"
+        }
+      },
+      "id": "SuggestResult"
+    },
+    "FilterValues": {
+      "id": "FilterValues",
+      "description": "List of filter values.",
+      "type": "object",
+      "properties": {
+        "values": {
+          "description": "The maximum allowable length for string values is 2048 characters.\nThe maximum number of elements is 100.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "UpdateSchemaRequest": {
+      "type": "object",
+      "properties": {
+        "validateOnly": {
+          "description": "If true, the request will be validated without side effects.",
+          "type": "boolean"
+        },
+        "schema": {
+          "$ref": "Schema",
+          "description": "The new schema for the source."
+        }
+      },
+      "id": "UpdateSchemaRequest"
+    },
+    "DriveLocationRestrict": {
+      "id": "DriveLocationRestrict",
+      "description": "Drive location search restricts (e.g. \"is:starred\").",
+      "type": "object",
+      "properties": {
+        "type": {
+          "enumDescriptions": [
+            "",
+            "",
+            ""
+          ],
+          "enum": [
+            "UNSPECIFIED",
+            "TRASHED",
+            "STARRED"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "Range": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "$ref": "Value"
+        },
+        "end": {
+          "$ref": "Value"
+        }
+      },
+      "id": "Range",
+      "description": "The range of values [start, end) for which faceting is applied"
+    },
+    "ItemStatus": {
+      "properties": {
+        "code": {
+          "type": "string",
+          "enumDescriptions": [
+            "Input-only value.  Used with\nItems.list\nto list all items in the queue, regardless of status.",
+            "Error encountered by Cloud Search while processing this item.\nDetails of the error are in\nrepositoryError.",
+            "Item has been modified in the repository, and is out of date with\nthe version previously accepted into Cloud Search.",
+            "Item is known to exist in the repository, but is not yet accepted by\nCloud Search.\nAn item can be in this state when\nItems.push\nhas been called for\nan item of this name that did not exist previously.",
+            "API has accepted the up-to-date data of this item."
+          ],
+          "enum": [
+            "CODE_UNSPECIFIED",
+            "ERROR",
+            "MODIFIED",
+            "NEW_ITEM",
+            "ACCEPTED"
+          ],
+          "description": "Status code."
+        },
+        "repositoryError": {
+          "description": "Repository error reported by connector.",
+          "type": "array",
+          "items": {
+            "$ref": "RepositoryError"
+          }
+        },
+        "processingError": {
+          "description": "Error details in case the item is in ERROR state.",
+          "type": "array",
+          "items": {
+            "$ref": "ProcessingError"
+          }
+        }
+      },
+      "id": "ItemStatus",
+      "description": "This contains item's status and any errors.",
+      "type": "object"
+    },
+    "FieldViolation": {
+      "id": "FieldViolation",
+      "type": "object",
+      "properties": {
+        "field": {
+          "description": "Path of field with violation.",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description of the error.",
+          "type": "string"
+        }
+      }
+    },
+    "DateOperatorOptions": {
+      "description": "Optional. Provides a search operator for date properties.\nSearch operators let users restrict the query to specific fields relevant\nto the type of item being searched.",
+      "type": "object",
+      "properties": {
+        "greaterThanOperatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\ndate property using the greater-than operator. For example, if\ngreaterThanOperatorName is *closedafter* and the property's name is\n*closeDate*, then queries like *closedafter:&lt;value&gt;* will\nshow results only where the value of the property named *closeDate* is\nlater than *&lt;value&gt;*.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        },
+        "lessThanOperatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\ndate property using the less-than operator. For example, if\nlessThanOperatorName is *closedbefore* and the property's name is\n*closeDate*, then queries like *closedbefore:&lt;value&gt;* will\nshow results only where the value of the property named *closeDate* is\nearlier than *&lt;value&gt;*.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        },
+        "operatorName": {
+          "description": "Indicates the actual string required in the query in order to isolate the\ndate property. For example, suppose an issue tracking schema object\nhas a property named *closeDate* that specifies an operator with an\noperatorName of *closedon*. For searches on that data, queries like\n*closedon:&lt;value&gt;* will show results only where the value of the\n*closeDate* property matches *&lt;value&gt;*. By contrast, a\nsearch that uses the same *&lt;value&gt;* without an operator will return\nall items where *&lt;value&gt;* matches the value of any String\nproperties or text within the content field for the indexed datasource.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        }
+      },
+      "id": "DateOperatorOptions"
+    },
+    "ObjectPropertyOptions": {
+      "description": "Options for object properties.",
+      "type": "object",
+      "properties": {
+        "subobjectProperties": {
+          "description": "The properties of the sub-object. These properties represent a nested\nobject. For example, if this property represents a postal address, the\nsubobjectProperties might be named *street*, *city*, and *state*.\nThe maximum number of elements is 1000.",
+          "type": "array",
+          "items": {
+            "$ref": "PropertyDefinition"
+          }
+        }
+      },
+      "id": "ObjectPropertyOptions"
+    },
+    "RequestOptions": {
+      "id": "RequestOptions",
+      "description": "Shared request options for all RPC methods.",
+      "type": "object",
+      "properties": {
+        "documentThumbnailOptions": {
+          "$ref": "DocumentThumbnailOptions",
+          "description": "The options to configure document thumbnail url."
+        },
+        "peoplePhotoOptions": {
+          "$ref": "PeoplePhotoOptions",
+          "description": "The options to configure photo profile url."
+        },
+        "languageCode": {
+          "description": "The BCP-47 language code, such as \"en-US\" or \"sr-Latn\".\nFor more information, see\nhttp://www.unicode.org/reports/tr35/#Unicode_locale_identifier.\nFor translations.",
+          "type": "string"
+        }
+      }
+    },
+    "TimestampPropertyOptions": {
+      "description": "Options for timestamp properties.",
+      "type": "object",
+      "properties": {
+        "operatorOptions": {
+          "$ref": "TimestampOperatorOptions",
+          "description": "If set, describes how the timestamp should be used as a search operator."
+        }
+      },
+      "id": "TimestampPropertyOptions"
+    },
+    "SuggestRequest": {
+      "description": "Request of suggest API.",
+      "type": "object",
+      "properties": {
+        "sourceOptions": {
+          "description": "suggest options.",
+          "type": "array",
+          "items": {
+            "$ref": "SuggestSourceOptions"
+          }
+        },
+        "requestOptions": {
+          "$ref": "RequestOptions",
+          "description": "Request options, such as image options for people info and thumbnails."
+        },
+        "query": {
+          "description": "Partial query for the completion suggestion.",
+          "type": "string"
+        }
+      },
+      "id": "SuggestRequest"
+    },
+    "DocumentThumbnailOptions": {
+      "description": "Options to control thumbnail size in document thumbnails.",
+      "type": "object",
+      "properties": {
+        "thumbnailUrlSizeInPx": {
+          "type": "integer",
+          "description": "The size of the document thumbnails.",
+          "format": "int32"
+        }
+      },
+      "id": "DocumentThumbnailOptions"
+    },
+    "ValueFilter": {
+      "type": "object",
+      "properties": {
+        "operatorName": {
+          "description": "The `operator_name` applied to the query, such as *price_greater_than*.\nThe filter can work against both types of filters defined in the schema\nfor your data source:\n\u003cbr/\u003e\u003cbr/\u003e\n1. `operator_name`, where the query filters results by the property\nthat matches the value.\n\u003cbr/\u003e\n2. `greater_than_operator_name` or `less_than_operator_name` in your\nschema. The query filters the results for the property values that are\ngreater than or less than  the supplied value in the query.",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "Value",
+          "description": "The value to be compared with."
+        }
+      },
+      "id": "ValueFilter"
+    },
+    "NamedProperty": {
+      "properties": {
+        "filterValues": {
+          "$ref": "FilterValues"
+        },
+        "timestampValues": {
+          "$ref": "TimestampValues"
+        },
+        "objectValues": {
+          "$ref": "ObjectValues"
+        },
+        "dateValues": {
+          "$ref": "DateValues"
+        },
+        "enumValues": {
+          "$ref": "EnumValues"
+        },
+        "integerValues": {
+          "$ref": "IntegerValues"
+        },
+        "doubleValues": {
+          "$ref": "DoubleValues"
+        },
+        "stringValues": {
+          "$ref": "StringValues"
+        },
+        "name": {
+          "description": "The name of the property.  This name should correspond to the name of the\nproperty that was registered for object definition in the schema.\nThe maximum allowable length for this property is 256 characters.",
+          "type": "string"
+        },
+        "booleanValue": {
+          "$ref": "BooleanValue"
+        }
+      },
+      "id": "NamedProperty",
+      "description": "A typed name-value pair for structured data.  The type of the value should\nbe the same as the registered type for the `name` property in the object\ndefinition of `objectType`.",
+      "type": "object"
+    },
+    "PushItemRequest": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "description": "Item to push onto the queue.",
+          "$ref": "PushItem"
+        }
+      },
+      "id": "PushItemRequest"
+    },
+    "PollItemsResponse": {
+      "id": "PollItemsResponse",
+      "type": "object",
+      "properties": {
+        "items": {
+          "description": "Set of items from the queue available for connector to process.\n\u003cbr /\u003eThese items have the following subset of fields populated: \u003cbr /\u003e\n\u003cbr /\u003eversion\n\u003cbr /\u003emetadata.hash\n\u003cbr /\u003estructured_data.hash\n\u003cbr /\u003econtent.hash\n\u003cbr /\u003epayload\n\u003cbr /\u003estatus\n\u003cbr /\u003equeue",
+          "type": "array",
+          "items": {
+            "$ref": "Item"
+          }
+        }
+      }
+    },
+    "ListItemsResponse": {
+      "type": "object",
+      "properties": {
+        "nextPageToken": {
+          "description": "Token to retrieve the next page of results, or empty if there are no\nmore results in the list.",
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "Item"
+          }
+        }
+      },
+      "id": "ListItemsResponse"
+    },
+    "UnreserveItemsRequest": {
+      "type": "object",
+      "properties": {
+        "queue": {
+          "description": "Name of a queue to unreserve items from.",
+          "type": "string"
+        }
+      },
+      "id": "UnreserveItemsRequest"
+    },
+    "TimestampValues": {
+      "description": "List of timestamp values.",
+      "type": "object",
+      "properties": {
+        "values": {
+          "description": "The maximum number of elements is 100.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "google-datetime"
+          }
+        }
+      },
+      "id": "TimestampValues"
+    },
+    "SearchQualityMetadata": {
+      "description": "Search Quality metadata of the item.",
+      "type": "object",
+      "properties": {
+        "quality": {
+          "description": "An indication of the quality of the item, used to influence Search quality.\nValue should be between 0.0 (lowest quality) and 1.0 (highest quality).",
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "id": "SearchQualityMetadata"
+    },
+    "DatePropertyOptions": {
+      "description": "Options for date properties.",
+      "type": "object",
+      "properties": {
+        "operatorOptions": {
+          "description": "If set, describes how the date should be used as a search operator.",
+          "$ref": "DateOperatorOptions"
+        }
+      },
+      "id": "DatePropertyOptions"
+    },
+    "RestrictItem": {
+      "description": "Information relevant only to a restrict entry.\nNextId: 7",
+      "type": "object",
+      "properties": {
+        "driveMimeTypeRestrict": {
+          "$ref": "DriveMimeTypeRestrict"
+        },
+        "searchOperator": {
+          "description": "The search restrict (e.g. \"after:2017-09-11 before:2017-09-12\").",
+          "type": "string"
+        },
+        "driveFollowUpRestrict": {
+          "$ref": "DriveFollowUpRestrict"
+        },
+        "driveLocationRestrict": {
+          "$ref": "DriveLocationRestrict"
+        },
+        "driveTimeSpanRestrict": {
+          "$ref": "DriveTimeSpanRestrict"
+        }
+      },
+      "id": "RestrictItem"
+    },
+    "FilterPropertyOptions": {
+      "description": "Options for filter properties, which are specifically designed to allow\nsearch users to filter query results by a pre-defined filter key. The filter\ntype is simliar to the string type, but filters are only used to match\nqueries where the filter key is used as a search operator and will not match\nqueries where the filter key is not specified.",
+      "type": "object",
+      "properties": {
+        "operatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\nfilter property. For example, if operatorName is *subject* and the\nproperty's name is *subjectLine*, then queries like\n*subject:&lt;value&gt;* will show results only where the value of the\nproperty named *subjectLine* matches *&lt;value&gt;*. In contrast to\nthe String properties, a search that uses the same *&lt;value&gt;* without an\noperator will not return items where the *subjectLine* property has\nvalue equal to *&lt;value&gt;*. In this way, filter properties must\nspecify the operator in order to be active for the search query.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        },
+        "tokenization": {
+          "enum": [
+            "UNSPECIFIED",
+            "TEXT",
+            "ATOM"
+          ],
+          "description": "Indicates how to tokenize the filter's value.",
+          "type": "string",
+          "enumDescriptions": [
+            "Invalid value.",
+            "The filter's value is tokenized as text.",
+            "The filter's value is not tokenized at all and treated as a single token."
+          ]
+        }
+      },
+      "id": "FilterPropertyOptions"
+    },
+    "DriveMimeTypeRestrict": {
+      "description": "Drive mime-type search restricts (e.g. \"type:pdf\").",
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "UNSPECIFIED",
+            "PDF",
+            "DOCUMENT",
+            "PRESENTATION",
+            "SPREADSHEET",
+            "FORM",
+            "DRAWING",
+            "SCRIPT",
+            "MAP",
+            "IMAGE",
+            "AUDIO",
+            "VIDEO",
+            "FOLDER",
+            "ARCHIVE"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+          ]
+        }
+      },
+      "id": "DriveMimeTypeRestrict"
+    },
+    "BooleanOperatorOptions": {
+      "properties": {
+        "operatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\nboolean property. For example, if operatorName is *closed* and the\nproperty's name is *isClosed*, then queries like\n*closed:&lt;value&gt;* will show results only where the value of the\nproperty named *isClosed* matches *&lt;value&gt;*. By contrast, a\nsearch that uses the same *&lt;value&gt;* without an operator will return\nall items where *&lt;value&gt;* matches the value of any String properties\nor text within the content field for the item.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        }
+      },
+      "id": "BooleanOperatorOptions",
+      "description": "Used to provide a search operator for boolean properties. This is\noptional. Search operators let users restrict the query to specific fields\nrelevant to the type of item being searched.",
+      "type": "object"
+    },
+    "StringValues": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "description": "The maximum allowable length for string values is 2048 characters.\nThe maximum number of string elements is 100.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "id": "StringValues",
+      "description": "List of string values."
+    },
+    "SuggestSourceOptions": {
+      "description": "Configure a source to query the suggest API.",
+      "type": "object",
+      "properties": {
+        "maxNumResults": {
+          "type": "integer",
+          "description": "Maximum number of results to return from this source.",
+          "format": "int32"
+        },
+        "source": {
+          "description": "The source of the suggestion.",
+          "$ref": "Source"
+        }
+      },
+      "id": "SuggestSourceOptions"
+    },
+    "DataSource": {
+      "description": "Data source is a logical namespace for items to be indexed.\nAll items must belong to a data source.  This is the prerequisite before\nitems can be indexed into Cloud Search.",
+      "type": "object",
+      "properties": {
+        "disableModifications": {
+          "description": "If true, Indexing API rejects any modification calls to this data source\nsuch as create, update, and delete.\nDisabling this does not imply halting process of previously\naccepted data.",
+          "type": "boolean"
+        },
+        "indexingServiceAccounts": {
+          "description": "List of service accounts that has indexing access.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "displayName": {
+          "description": "Required. Display name of the data source\nThe maximum length is 300 characters.",
+          "type": "string"
+        },
+        "disableServing": {
+          "type": "boolean",
+          "description": "Disable serving any search or assist results.\nDisabling serving does not imply disabling API call."
+        },
+        "itemsVisibility": {
+          "description": "This restricts visibility to items at a data source level to the\ndisjunction of users/groups mentioned with the field. Note that, this\ndoes not ensure access to a specific item, as the users needs to have ACL\npermissions on the item too. This ensures a high level access on the entire\ndata source, and that the individual items are not shared outside this\nvisibility.",
+          "type": "array",
+          "items": {
+            "$ref": "GSuitePrincipal"
+          }
+        },
+        "name": {
+          "description": "Name of the data source resource.\nFormat: datasources/{source_id}.\n\u003cbr /\u003eThe name is ignored when creating a data source.",
+          "type": "string"
+        }
+      },
+      "id": "DataSource"
+    },
+    "UpdateDataSourceRequest": {
+      "id": "UpdateDataSourceRequest",
+      "type": "object",
+      "properties": {
+        "source": {
+          "$ref": "DataSource"
+        }
+      }
+    },
+    "FacetResult": {
+      "id": "FacetResult",
+      "description": "Source specific facet response",
+      "type": "object",
+      "properties": {
+        "operatorName": {
+          "description": "Name of the operator chosen for faceting. @see\ncloudsearch.SchemaPropertyOptions",
+          "type": "string"
+        },
+        "bucket": {
+          "type": "array",
+          "items": {
+            "$ref": "FacetBucket"
+          },
+          "description": "FacetBuckets for values in response containing atleast a single result."
+        },
+        "objectType": {
+          "type": "string",
+          "description": "Object type for which facet results are returned. Can be empty."
+        },
+        "sourceName": {
+          "description": "Source name for which facet results are returned. Will not be empty.",
+          "type": "string"
+        }
+      }
+    },
+    "BooleanValue": {
+      "id": "BooleanValue",
+      "description": "Boolean value.",
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "boolean"
+        }
+      }
+    },
+    "StringOperatorOptions": {
+      "description": "Used to provide a search operator for string properties. This is optional.\nSearch operators let users restrict the query to specific fields relevant\nto the type of item being searched.",
+      "type": "object",
+      "properties": {
+        "operatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\nstring property. For example, if operatorName is *subject* and the\nproperty's name is *subjectLine*, then queries like\n*subject:&lt;value&gt;* will show results only where the value of the\nproperty named *subjectLine* matches *&lt;value&gt;*. By contrast, a\nsearch that uses the same *&lt;value&gt;* without an operator will return\nall items where *&lt;value&gt;* matches the value of any String properties\nor text within the content field for the item.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        }
+      },
+      "id": "StringOperatorOptions"
+    },
+    "ItemMetadata": {
+      "description": "Available metadata fields for the item.",
+      "type": "object",
+      "properties": {
+        "objectType": {
+          "description": "The type of the item.  This should correspond to the name of an object\ndefinition in the schema registered for the data source.  For example, if\nthe schema for the data source contains an object definition with name\n'document', then item indexing requests for objects of that type should set\nobjectType to 'document'.\nThe maximum length is 256 characters.",
+          "type": "string"
+        },
+        "mimeType": {
+          "description": "The original mime-type of\nItemContent.content\nin the source repository.\nThe maximum length is 256 characters.",
+          "type": "string"
+        },
+        "title": {
+          "description": "The title of the item.  If given, this will be the displayed title of the\nSearch result.\nThe maximum length is 2048 characters.",
+          "type": "string"
+        },
+        "lastModifiedTime": {
+          "description": "The time when the item was last modified in the source repository.",
+          "format": "google-datetime",
+          "type": "string"
+        },
+        "hash": {
+          "description": "Hashing value provided by the API caller.\nThis can be used with the\nitems.push\nmethod to calculate modified state.\nThe maximum length is 2048 characters.",
+          "type": "string"
+        },
+        "searchQualityMetadata": {
+          "$ref": "SearchQualityMetadata",
+          "description": "Search Quality metadata of the item."
+        },
+        "creationTime": {
+          "type": "string",
+          "description": "The time when the item was created in the source repository.",
+          "format": "google-datetime"
+        },
+        "interactions": {
+          "description": "A list of interactions for the item.  Interactions are used to improve\nSearch quality, but are not exposed to end users.\nThe maximum number of elements is 1000.",
+          "type": "array",
+          "items": {
+            "$ref": "Interaction"
+          }
+        },
+        "contentLanguage": {
+          "description": "The BCP-47 language code for the item, such as \"en-US\" or \"sr-Latn\". For\nmore information, see\nhttp://www.unicode.org/reports/tr35/#Unicode_locale_identifier.\nThe maximum length is 32 characters.",
+          "type": "string"
+        },
+        "sourceRepositoryUrl": {
+          "description": "Link to the source repository serving the data.  &#83;earch results apply\nthis link to the title.\nThe maximum length is 2048 characters.",
+          "type": "string"
+        },
+        "containerName": {
+          "description": "The name of the container for this item.\nDeletion of the container item leads to automatic deletion of this\nitem.  Note: ACLs are not inherited from a container item.\nTo provide ACL inheritance for an item, use the\ninheritAclFrom\nfield. The maximum length is 2048 characters.",
+          "type": "string"
+        }
+      },
+      "id": "ItemMetadata"
+    },
+    "IntegerPropertyOptions": {
+      "description": "Options for integer properties.",
+      "type": "object",
+      "properties": {
+        "orderedRanking": {
+          "description": "Used to specify the ordered ranking for the integer. Can only be used if\nisRepeatable\nis false.",
+          "type": "string",
+          "enumDescriptions": [
+            "There is no ranking order for the property. Results will not be adjusted\nby this property's value.",
+            "This property is ranked in ascending order. Lower values indicate lower\nranking.",
+            "This property is ranked in descending order. Lower values indicate\nhigher ranking."
+          ],
+          "enum": [
+            "NO_ORDER",
+            "ASCENDING",
+            "DESCENDING"
+          ]
+        },
+        "maximumValue": {
+          "description": "The maximum value of the property. The minimum and maximum values for the\nproperty are used to rank results according to the\nordered ranking.\nIndexing requests with values greater than the maximum are accepted and\nranked with the same weight as items indexed with the maximum value.",
+          "format": "int64",
+          "type": "string"
+        },
+        "minimumValue": {
+          "description": "The minimum value of the property. The minimum and maximum values for the\nproperty are used to rank results according to the\nordered ranking.\nIndexing requests with values less than the minimum are accepted and\nranked with the same weight as items indexed with the minimum value.",
+          "format": "int64",
+          "type": "string"
+        },
+        "operatorOptions": {
+          "$ref": "IntegerOperatorOptions",
+          "description": "If set, describes how the integer should be used as a search operator."
+        }
+      },
+      "id": "IntegerPropertyOptions"
+    },
+    "StructuredDataObject": {
+      "properties": {
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "NamedProperty"
+          },
+          "description": "The properties for the object.\nThe maximum number of elements is 1000."
+        }
+      },
+      "id": "StructuredDataObject",
+      "description": "A structured data object consisting of named properties.",
+      "type": "object"
+    },
+    "EnumPropertyOptions": {
+      "type": "object",
+      "properties": {
+        "operatorOptions": {
+          "$ref": "EnumOperatorOptions",
+          "description": "If set, describes how the enum should be used as a search operator."
+        },
+        "possibleValues": {
+          "description": "The list of possible values for the enumeration property. All\nEnumValuePairs must provide a string value. If you specify an integer value\nfor one EnumValuePair, then all possible EnumValuePairs must provide an\ninteger value. Both the string value and integer value must be unique over\nall possible values. Once set, possible values cannot be removed or\nmodified. If you supply an ordered ranking and think you might insert\nadditional enum values in the future, leave gaps in the initial integer\nvalues to allow adding a value in between previously registered values.\nThe maximum number of elements is 100.",
+          "type": "array",
+          "items": {
+            "$ref": "EnumValuePair"
+          }
+        },
+        "orderedRanking": {
+          "enumDescriptions": [
+            "There is no ranking order for the property. Results will not be adjusted\nby this property's value.",
+            "This property is ranked in ascending order. Lower values indicate lower\nranking.",
+            "This property is ranked in descending order. Lower values indicate\nhigher ranking."
+          ],
+          "enum": [
+            "NO_ORDER",
+            "ASCENDING",
+            "DESCENDING"
+          ],
+          "description": "Used to specify the ordered ranking for the enumeration that determines how\nthe integer values provided in the possible EnumValuePairs are used to rank\nresults. If specified, integer values must be provided for all possible\nEnumValuePair values given for this property. Can only be used if\nisRepeatable\nis false.",
+          "type": "string"
+        }
+      },
+      "id": "EnumPropertyOptions",
+      "description": "Options for enum properties, which allow you to define a restricted set of\nstrings to match user queries, set rankings for those string values, and\ndefine an operator name to be paired with those strings so that users can\nnarrow results to only items with a specific value. For example, for items in\na request tracking system with priority information, you could define *p0* as\nan allowable enum value and tie this enum to the operator name *priority* so\nthat search users could add *priority:p0* to their query to restrict the set\nof results to only those items indexed with the value *p0*."
+    },
+    "QueryInterpretation": {
+      "properties": {
+        "interpretedQuery": {
+          "description": "The interpretation of the query used in search. For example, query \"email\nfrom john\" will be interpreted as \"from:john source:mail\"",
+          "type": "string"
+        },
+        "interpretationType": {
+          "type": "string",
+          "enumDescriptions": [
+            "No natural language interpretation or the natural language interpretation\nis not used to fetch the search results.",
+            "The natural language results is mixed with results from original query.",
+            "The results only contain natural language results."
+          ],
+          "enum": [
+            "NONE",
+            "BLEND",
+            "REPLACE"
+          ]
+        }
+      },
+      "id": "QueryInterpretation",
+      "type": "object"
+    },
+    "FacetBucket": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "Value"
+        },
+        "range": {
+          "$ref": "Range"
+        }
+      },
+      "id": "FacetBucket",
+      "description": "A bucket in a facet is the basic unit of operation. A bucket can comprise\neither a single value OR a contiguous range of values, depending on the\ntype of the field bucketed.\nFacetBucket is currently used only for returning the response object."
+    },
+    "Filter": {
+      "properties": {
+        "valueFilter": {
+          "$ref": "ValueFilter"
+        },
+        "compositeFilter": {
+          "$ref": "CompositeFilter"
+        }
+      },
+      "id": "Filter",
+      "description": "A generic way of expressing filters in a query, which supports two\napproaches: \u003cbr/\u003e\u003cbr/\u003e\n**1. Setting a ValueFilter.** The name must match an operator_name defined in\nthe schema for your data source.\n\u003cbr/\u003e\n**2. Setting a CompositeFilter.** The filters are evaluated\nusing the logical operator. The top-level operators can only be either an AND\nor a NOT. AND can appear only at the top-most level. OR can appear only under\na top-level AND.",
+      "type": "object"
+    },
+    "Name": {
+      "id": "Name",
+      "description": "A person's name.",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "description": "The read-only display name formatted according to the locale specified by\nthe viewer's account or the \u003ccode\u003eAccept-Language\u003c/code\u003e HTTP header.",
+          "type": "string"
+        }
+      }
+    },
+    "IntegerOperatorOptions": {
+      "description": "Used to provide a search operator for integer properties. This is\noptional. Search operators let users restrict the query to specific fields\nrelevant to the type of item being searched.",
+      "type": "object",
+      "properties": {
+        "greaterThanOperatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\ninteger property using the greater-than operator. For example, if\ngreaterThanOperatorName is *priorityabove* and the property's name is\n*priorityVal*, then queries like *priorityabove:&lt;value&gt;* will\nshow results only where the value of the property named *priorityVal* is\ngreater than *&lt;value&gt;*.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        },
+        "lessThanOperatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\ninteger property using the less-than operator. For example, if\nlessThanOperatorName is *prioritybelow* and the property's name is\n*priorityVal*, then queries like *prioritybelow:&lt;value&gt;* will\nshow results only where the value of the property named *priorityVal* is\nless than *&lt;value&gt;*.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        },
+        "operatorName": {
+          "description": "Indicates the operator name required in the query in order to isolate the\ninteger property. For example, if operatorName is *priority* and the\nproperty's name is *priorityVal*, then queries like\n*priority:&lt;value&gt;* will show results only where the value of the\nproperty named *priorityVal* matches *&lt;value&gt;*. By contrast, a\nsearch that uses the same *&lt;value&gt;* without an operator will return\nall items where *&lt;value&gt;* matches the value of any String properties\nor text within the content field for the item.\nThe operator name can only contain lowercase letters (a-z).\nThe maximum length is 32 characters.",
+          "type": "string"
+        }
+      },
+      "id": "IntegerOperatorOptions"
+    },
+    "FilterOptions": {
+      "description": "Filter options to be applied on query.",
+      "type": "object",
+      "properties": {
+        "objectType": {
+          "description": "If object_type is set, only objects of that type are returned. This should\ncorrespond to the name of the object that was registered within the\ndefinition of schema. The maximum length is 256 characters.",
+          "type": "string"
+        },
+        "filter": {
+          "description": "Generic filter to restrict the search, such as `lang:en`, `site:xyz`.",
+          "$ref": "Filter"
+        }
+      },
+      "id": "FilterOptions"
+    },
+    "ProcessingError": {
+      "properties": {
+        "fieldViolations": {
+          "description": "In case the item fields are invalid, this field contains the details\nabout the validation errors.",
+          "type": "array",
+          "items": {
+            "$ref": "FieldViolation"
+          }
+        },
+        "code": {
+          "type": "string",
+          "enumDescriptions": [
+            "Input only value.  Use this value in Items.",
+            "Item's ACL, metadata, or content is malformed or in invalid state.\nFieldViolations contains more details on where the problem is.",
+            "Countent format is unsupported.",
+            "Items with incomplete ACL information due to inheriting other\nitems with broken ACL or having groups with unmapped descendants.",
+            "ACL inheritance graph formed a cycle."
+          ],
+          "enum": [
+            "PROCESSING_ERROR_CODE_UNSPECIFIED",
+            "MALFORMED_REQUEST",
+            "UNSUPPORTED_CONTENT_FORMAT",
+            "INDIRECT_BROKEN_ACL",
+            "ACL_CYCLE"
+          ],
+          "description": "Error code indicating the nature of the error."
+        },
+        "errorMessage": {
+          "type": "string",
+          "description": "Description of the error."
+        }
+      },
+      "id": "ProcessingError",
+      "type": "object"
+    },
+    "EnumValues": {
+      "description": "List of enum values.",
+      "type": "object",
+      "properties": {
+        "values": {
+          "description": "The maximum allowable length for string values is 32 characters.\nThe maximum number of elements is 100.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "id": "EnumValues"
+    },
+    "ItemStructuredData": {
+      "description": "Available structured data fields for the item.",
+      "type": "object",
+      "properties": {
+        "hash": {
+          "type": "string",
+          "description": "Hashing value provided by the API caller.\nThis can be used with the\nitems.push\nmethod to calculate modified state.\nThe maximum length is 2048 characters."
+        },
+        "object": {
+          "$ref": "StructuredDataObject",
+          "description": "The structured data object that should conform to a registered object\ndefinition in the schema for the data source."
+        }
+      },
+      "id": "ItemStructuredData"
+    },
+    "Item": {
+      "description": "Represents a single object that is an item in the search index, such as a\nfile, folder, or a database record.",
+      "type": "object",
+      "properties": {
+        "structuredData": {
+          "description": "The structured data for the item that should conform to a registered\nobject definition in the schema for the data source.",
+          "$ref": "ItemStructuredData"
+        },
+        "status": {
+          "description": "Status of the item.\nOutput only field.",
+          "$ref": "ItemStatus"
+        },
+        "payload": {
+          "description": "Additional state connector can store for this item.\nThe maximum length is 10000 bytes.",
+          "format": "byte",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the Item. Format:\ndatasources/{source_id}/items/{item_id}\n\u003cbr /\u003eThis is a required field.\nThe maximum length is 2048 characters.",
+          "type": "string"
+        },
+        "acl": {
+          "$ref": "ItemAcl",
+          "description": "Access control list for this item."
+        },
+        "content": {
+          "$ref": "ItemContent",
+          "description": "Item content to be indexed and made text searchable."
+        },
+        "metadata": {
+          "description": "Metadata information.",
+          "$ref": "ItemMetadata"
+        },
+        "version": {
+          "description": "Required. The indexing system stores the version from the datasource as a\nbyte string and compares the Item version in the index\nto the version of the queued Item using lexical ordering.\n\u003cbr /\u003e\u003cbr /\u003e\nCloud Search Indexing won't index or delete any queued item with\na version value that is less than or equal to the version of the\ncurrently indexed item.\nThe maximum length for this field is 1024 bytes.",
+          "format": "byte",
+          "type": "string"
+        },
+        "queue": {
+          "description": "Queue this item belongs to.\nThe maximum length is 100 characters.",
+          "type": "string"
+        },
+        "itemType": {
+          "enumDescriptions": [
+            "",
+            "An item that is indexed for the only purpose of serving information.\nThese items cannot be referred in\ncontainerName\nor inheritAclFrom\nfields.",
+            "An item that gets indexed and whose purpose is to supply other items\nwith ACLs and/or contain other items.",
+            "An item that does not get indexed, but otherwise has the same purpose\nas CONTAINER_ITEM."
+          ],
+          "enum": [
+            "UNSPECIFIED",
+            "CONTENT_ITEM",
+            "CONTAINER_ITEM",
+            "VIRTUAL_CONTAINER_ITEM"
+          ],
+          "description": "Type for this item.",
+          "type": "string"
+        }
+      },
+      "id": "Item"
+    },
+    "Interaction": {
+      "description": "Represents an interaction between a user and an item.",
+      "type": "object",
+      "properties": {
+        "principal": {
+          "description": "The user that acted on the item.",
+          "$ref": "Principal"
+        },
+        "type": {
+          "enumDescriptions": [
+            "Invalid value.",
+            "This interaction indicates the user viewed the item.",
+            "This interaction indicates the user edited the item."
+          ],
+          "enum": [
+            "UNSPECIFIED",
+            "VIEW",
+            "EDIT"
+          ],
+          "type": "string"
+        },
+        "interactionTime": {
+          "description": "The time when the user acted on the item.  If multiple actions of the same\ntype exist for a single user, only the most recent action is recorded.",
+          "format": "google-datetime",
+          "type": "string"
+        }
+      },
+      "id": "Interaction"
+    },
+    "StartUploadItemRequest": {
+      "description": "Start upload file request.",
+      "type": "object",
+      "properties": {},
+      "id": "StartUploadItemRequest"
+    },
+    "Value": {
+      "description": "Definition of a single value with generic type.",
+      "type": "object",
+      "properties": {
+        "doubleValue": {
+          "format": "double",
+          "type": "number"
+        },
+        "timestampValue": {
+          "format": "google-datetime",
+          "type": "string"
+        },
+        "booleanValue": {
+          "type": "boolean"
+        },
+        "integerValue": {
+          "format": "int64",
+          "type": "string"
+        },
+        "stringValue": {
+          "type": "string"
+        },
+        "dateValue": {
+          "$ref": "Date"
+        }
+      },
+      "id": "Value"
+    },
+    "Photo": {
+      "description": "A person's photo.",
+      "type": "object",
+      "properties": {
+        "url": {
+          "description": "The URL of the photo.",
+          "type": "string"
+        }
+      },
+      "id": "Photo"
+    },
+    "ItemAcl": {
+      "description": "Access control list information for the item.",
+      "type": "object",
+      "properties": {
+        "inheritAclFrom": {
+          "description": "Name of the item to inherit the Access Permission List (ACL) from.\nNote: ACL inheritance *only* provides access permissions\nto child items and does not define structural relationships, nor does it\nprovide convenient ways to delete large groups of items.\nDeleting an ACL parent from the index only alters the access permissions of\nchild items that reference the parent in the\ninheritAclFrom\nfield. The item is still in the index, but may not\nvisible in search results. By contrast, deletion of a container item\nalso deletes all items that reference the container via the\ncontainerName\nfield.\nThe maximum length for this field is 2048 characters.",
+          "type": "string"
+        },
+        "deniedReaders": {
+          "description": "List of readers denied access.  This is a list of\nprincipals who shouldn't be allowed read/write access to the document\nand should therefore not see that document in search results.\nThis list overrides access for any corresponding principals in the readers\nfield.\nThe maximum number of elements is 100.",
+          "type": "array",
+          "items": {
+            "$ref": "Principal"
+          }
+        },
+        "readers": {
+          "description": "List of readers with access. Required if the item is not a container\nand no\ninheritAclFrom field\nis set. This is a list of\nprincipals who should be allowed read/write access to the document\nand should therefore see that document in search results.\nThe maximum number of elements is 1000.",
+          "type": "array",
+          "items": {
+            "$ref": "Principal"
+          }
+        },
+        "aclInheritanceType": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "CHILD_OVERRIDE",
+            "PARENT_OVERRIDE",
+            "BOTH_PERMIT"
+          ],
+          "description": "Sets the type of access rules to apply when an item inherits its ACL from a\nparent. This should always be set in tandem with the\ninheritAclFrom\nfield. Also, when the\ninheritAclFrom field\nis set, this field should be set to a valid AclInheritanceType.",
+          "type": "string",
+          "enumDescriptions": [
+            "The default value when this item does not inherit an ACL.\nUse NOT_APPLICABLE when\ninheritAclFrom\nis empty.  An item without ACL inheritance can still have ACLs supplied\nby its own readers and deniedReaders fields.",
+            "During an authorization conflict, the ACL of the child item determines\nits read access.",
+            "During an authorization conflict, the ACL of the parent item\nspecified in the\ninheritAclFrom\nfield determines read access.",
+            "Access is granted only if this item and the parent item specified in\nthe inheritAclFrom\nfield both permit read access."
+          ]
+        },
+        "owners": {
+          "description": "Optional. List of owners for the item. This field has no bearing on\ndocument access permissions currently. It does, however, supply\nthe capabilities for the `from:` and `owner:` query operators for this\ndocument. For example, all of the following queries can be used to\nmatch documents with supplied owners fields: \"owner:me\", \"from:username\",\n\"owner:username@example.com.\" Slight ranking boosts also occur for\ndocuments for which the search user is an owner.\nThe maximum number of elements is 5.",
+          "type": "array",
+          "items": {
+            "$ref": "Principal"
+          }
+        }
+      },
+      "id": "ItemAcl"
+    },
+    "RepositoryError": {
+      "description": "Errors when the connector is communicating to the source repository.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Type of error.",
+          "type": "string",
+          "enumDescriptions": [
+            "Unknown error.",
+            "Unknown or unreachable host.",
+            "DNS problem, such as the DNS server is not responding.",
+            "Cannot connect to the repository server.",
+            "Failed authentication due to incorrect credentials.",
+            "Service account is not authorized for the repository.",
+            "Repository server error.",
+            "Quota exceeded.",
+            "Server temporarily unavailable.",
+            "Client-related error, such as an invalid request from the connector to\nthe repository server."
+          ],
+          "enum": [
+            "UNKNOWN",
+            "NETWORK_ERROR",
+            "DNS_ERROR",
+            "CONNECTION_ERROR",
+            "AUTHENTICATION_ERROR",
+            "AUTHORIZATION_ERROR",
+            "SERVER_ERROR",
+            "QUOTA_EXCEEDED",
+            "SERVICE_UNAVAILABLE",
+            "CLIENT_ERROR"
+          ]
+        },
+        "errorMessage": {
+          "description": "Message that describes the error. The maximum allowable length\nof the message is 8192 characters.",
+          "type": "string"
+        },
+        "httpStatusCode": {
+          "description": "Error codes.  Matches the definition of HTTP status codes.",
+          "format": "int32",
+          "type": "integer"
+        }
+      },
+      "id": "RepositoryError"
+    },
+    "Principal": {
+      "properties": {
+        "userResourceName": {
+          "description": "This principal is a user identified using an external identity.\nThe name field must specify the user resource name with this format:\nidentitysources/{source_id}/users/{ID}",
+          "type": "string"
+        },
+        "gsuitePrincipal": {
+          "$ref": "GSuitePrincipal",
+          "description": "This principal is a GSuite user, group or domain."
+        },
+        "groupResourceName": {
+          "description": "This principal is a group identified using an external identity.\nThe name field must specify the group resource name with this format:\nidentitysources/{source_id}/groups/{ID}",
+          "type": "string"
+        }
+      },
+      "id": "Principal",
+      "description": "Reference to a user, group, or domain.",
+      "type": "object"
+    },
+    "StringPropertyOptions": {
+      "description": "Options for string properties. String property values will be indexed and\nused for full text retrieval.",
+      "type": "object",
+      "properties": {
+        "operatorOptions": {
+          "description": "If set, describes how the string should be used as a search operator.",
+          "$ref": "StringOperatorOptions"
+        },
+        "tokenImportance": {
+          "description": "Indicates the search quality importance of the tokens within the\nfield. Can only be used if Tokenization is TEXT. For HTML tokenization,\nHTML tags around the tokens indicate the importance.",
+          "type": "string",
+          "enumDescriptions": [
+            "Treat the text like body text.",
+            "Treat the text like the title of the item.",
+            "Treat the text with higher importance than body text.",
+            "Treat the text with lower importance than body text."
+          ],
+          "enum": [
+            "NORMAL",
+            "HIGHEST",
+            "HIGH",
+            "LOW"
+          ]
+        },
+        "tokenization": {
+          "enum": [
+            "UNSPECIFIED",
+            "TEXT",
+            "HTML"
+          ],
+          "description": "Indicates how to tokenize the string's value.",
+          "type": "string",
+          "enumDescriptions": [
+            "Invalid value.",
+            "The string is tokenized as text.",
+            "The string is tokenized as HTML."
+          ]
+        }
+      },
+      "id": "StringPropertyOptions"
+    },
+    "SortOptions": {
+      "type": "object",
+      "properties": {
+        "operatorName": {
+          "description": "Name of the operator corresponding to the field(s) to sort on",
+          "type": "string"
+        },
+        "sortOrder": {
+          "enumDescriptions": [
+            "",
+            ""
+          ],
+          "enum": [
+            "ASCENDING",
+            "DESCENDING"
+          ],
+          "description": "Ascending is the default sort order",
+          "type": "string"
+        }
+      },
+      "id": "SortOptions"
+    },
+    "Schema": {
+      "description": "The schema definition for a data source.",
+      "type": "object",
+      "properties": {
+        "objectDefinitions": {
+          "description": "The list of top-level objects for the data source.\nThe maximum number of elements is 10.",
+          "type": "array",
+          "items": {
+            "$ref": "ObjectDefinition"
+          }
+        }
+      },
+      "id": "Schema"
+    },
+    "PropertyDefinition": {
+      "description": "The definition of a property within an object.",
+      "type": "object",
+      "properties": {
+        "enumPropertyOptions": {
+          "$ref": "EnumPropertyOptions"
+        },
+        "datePropertyOptions": {
+          "$ref": "DatePropertyOptions"
+        },
+        "isReturnable": {
+          "description": "Indicates if the property identifies data that should be returned in search\nresults via the Query API. If set to *true*, indicates that Query API\nusers can use matching property fields in results. However, storing fields\nrequires more space allocation and uses more bandwidth for search queries,\nwhich impacts performance over large datasets. Set to *true* here only if\nthe field is needed for search results. Cannot be true for properties\nwhose type is an object.",
+          "type": "boolean"
+        },
+        "filterPropertyOptions": {
+          "$ref": "FilterPropertyOptions"
+        },
+        "name": {
+          "description": "The name of the property. Item indexing requests sent to the Indexing API\nshould set the property name\nequal to this value. For example, if name is *subject_line*, then indexing\nrequests for document items with subject fields should set the\nname for that field equal to\n*subject_line*. Use the name as the identifier for the object property.\nOnce registered as a property for an object, you cannot re-use this name\nfor another property within that object.\nThe name must start with a letter and can only contain letters (A-Z, a-z)\nor numbers (0-9).\nThe maximum length is 256 characters.",
+          "type": "string"
+        },
+        "booleanPropertyOptions": {
+          "$ref": "BooleanPropertyOptions"
+        },
+        "timestampPropertyOptions": {
+          "$ref": "TimestampPropertyOptions"
+        },
+        "doublePropertyOptions": {
+          "$ref": "DoublePropertyOptions"
+        },
+        "isRepeatable": {
+          "description": "Indicates if multiple values are allowed for the property. For example, a\ndocument only has one description but can have multiple comments. Cannot be\ntrue for properties whose type is a boolean.\nIf set to false, properties that contain more than one value will cause the\nindexing request for that item to be rejected.",
+          "type": "boolean"
+        },
+        "stringPropertyOptions": {
+          "$ref": "StringPropertyOptions"
+        },
+        "objectPropertyOptions": {
+          "$ref": "ObjectPropertyOptions"
+        },
+        "integerPropertyOptions": {
+          "$ref": "IntegerPropertyOptions"
+        }
+      },
+      "id": "PropertyDefinition"
+    },
+    "GSuitePrincipal": {
+      "type": "object",
+      "properties": {
+        "gsuiteUserEmail": {
+          "description": "This principal references a G Suite user account",
+          "type": "string"
+        },
+        "gsuiteGroupEmail": {
+          "description": "This principal references a G Suite group account",
+          "type": "string"
+        },
+        "gsuiteDomain": {
+          "description": "This principal represents all users of the G Suite domain of the\ncustomer.",
+          "type": "boolean"
+        }
+      },
+      "id": "GSuitePrincipal"
+    },
+    "SuggestResponse": {
+      "description": "Response of the suggest API.",
+      "type": "object",
+      "properties": {
+        "querySuggestions": {
+          "description": "List of query text suggestions.",
+          "type": "array",
+          "items": {
+            "$ref": "QuerySuggestion"
+          }
+        },
+        "suggestResults": {
+          "description": "List of suggestion results.",
+          "type": "array",
+          "items": {
+            "$ref": "SuggestResult"
+          }
+        },
+        "peopleSuggestions": {
+          "description": "List of people suggestions.",
+          "type": "array",
+          "items": {
+            "$ref": "PeopleSuggestion"
+          }
+        }
+      },
+      "id": "SuggestResponse"
+    },
+    "PeopleSuggestion": {
+      "description": "A people suggestion.",
+      "type": "object",
+      "properties": {
+        "person": {
+          "description": "Suggested person.",
+          "$ref": "Person"
+        }
+      },
+      "id": "PeopleSuggestion"
+    },
+    "IndexItemRequest": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "enumDescriptions": [
+            "Priority is not specified in the update request.\nLeaving priority unspecified results in an update failure.",
+            "For real-time updates.",
+            "For bulk backfill of entire or parts of the repository."
+          ],
+          "enum": [
+            "UNSPECIFIED",
+            "SYNCHRONOUS",
+            "ASYNCHRONOUS"
+          ],
+          "description": "This update request should go into incremental priority or backfill\npriority.",
+          "type": "string"
+        },
+        "item": {
+          "$ref": "Item",
+          "description": "Name of the item.  Format:\ndatasources/{source_id}/items/{item_id}"
+        }
+      },
+      "id": "IndexItemRequest"
+    },
+    "QueryInterpretationOptions": {
+      "description": "Options to interpret user query.",
+      "type": "object",
+      "properties": {
+        "disableNlInterpretation": {
+          "description": "Flag to disable query parsing. Default is false, Set to true to disable\nquery parsing.",
+          "type": "boolean"
+        }
+      },
+      "id": "QueryInterpretationOptions"
+    },
+    "Snippet": {
+      "type": "object",
+      "properties": {
+        "matchRanges": {
+          "description": "The matched ranges in the snippet.",
+          "type": "array",
+          "items": {
+            "$ref": "MatchRange"
+          }
+        },
+        "snippet": {
+          "description": "The snippet.",
+          "type": "string"
+        }
+      },
+      "id": "Snippet",
+      "description": "Snippet of the search result, which summarizes the content of the resulting\npage."
+    },
+    "DriveFollowUpRestrict": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enumDescriptions": [
+            "",
+            "",
+            ""
+          ],
+          "enum": [
+            "UNSPECIFIED",
+            "FOLLOWUP_SUGGESTIONS",
+            "FOLLOWUP_ACTION_ITEMS"
+          ]
+        }
+      },
+      "id": "DriveFollowUpRestrict",
+      "description": "Drive follow-up search restricts (e.g. \"followup:suggestions\")."
+    },
+    "DoublePropertyOptions": {
+      "description": "Options for double properties.",
+      "type": "object",
+      "properties": {},
+      "id": "DoublePropertyOptions"
+    },
+    "IntegerValues": {
+      "description": "List of integer values.",
+      "type": "object",
+      "properties": {
+        "values": {
+          "description": "The maximum number of elements is 100.",
+          "type": "array",
+          "items": {
+            "format": "int64",
+            "type": "string"
+          }
+        }
+      },
+      "id": "IntegerValues"
+    },
+    "BooleanPropertyOptions": {
+      "description": "Options for boolean properties.",
+      "type": "object",
+      "properties": {
+        "operatorOptions": {
+          "description": "If set, describes how the boolean should be used as a search operator.",
+          "$ref": "BooleanOperatorOptions"
+        }
+      },
+      "id": "BooleanPropertyOptions"
+    },
+    "SearchRequest": {
+      "description": "The search API request.",
+      "type": "object",
+      "properties": {
+        "sortOptions": {
+          "$ref": "SortOptions",
+          "description": "The options for sorting the search results"
+        },
+        "facetOptions": {
+          "description": "The options to enable facet.",
+          "type": "array",
+          "items": {
+            "$ref": "FacetOptions"
+          }
+        },
+        "pageSize": {
+          "type": "integer",
+          "description": "Maximum number of search results to return in one page.\nValid values are between 1 and 100, inclusive.\nDefault value is 10.",
+          "format": "int32"
+        },
+        "query": {
+          "description": "The raw query string.\nSee supported search operators in the [Cloud search\nCheat\nSheet](https://gsuite.google.com/learning-center/products/cloudsearch/cheat-sheet/)",
+          "type": "string"
+        },
+        "start": {
+          "description": "Starting index of the results.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "queryInterpretationOptions": {
+          "description": "Options to interpret the user query.",
+          "$ref": "QueryInterpretationOptions"
+        },
+        "sourceOptions": {
+          "description": "The sources to use for querying. You must specifiy at least one source\nto search.",
+          "type": "array",
+          "items": {
+            "$ref": "SearchSourceOptions"
+          }
+        },
+        "requestOptions": {
+          "$ref": "RequestOptions",
+          "description": "Request options."
+        }
+      },
+      "id": "SearchRequest"
+    },
+    "CompositeFilter": {
+      "type": "object",
+      "properties": {
+        "logicOperator": {
+          "type": "string",
+          "enumDescriptions": [
+            "Logical operators, which can only be applied to sub filters.",
+            "",
+            "NOT can only be applied on a single sub filter."
+          ],
+          "enum": [
+            "AND",
+            "OR",
+            "NOT"
+          ],
+          "description": "The logic operator of the sub filter."
+        },
+        "subFilters": {
+          "description": "Sub filters.",
+          "type": "array",
+          "items": {
+            "$ref": "Filter"
+          }
+        }
+      },
+      "id": "CompositeFilter"
+    },
+    "EnumValuePair": {
+      "properties": {
+        "integerValue": {
+          "description": "The integer value of the EnumValuePair which must be non-negative.\nOptional.",
+          "format": "int32",
+          "type": "integer"
+        },
+        "stringValue": {
+          "description": "The string value of the EnumValuePair.\nThe maximum length is 32 characters.",
+          "type": "string"
+        }
+      },
+      "id": "EnumValuePair",
+      "description": "The enumeration value pair defines two things: a required string value and\nan optional integer value. The string value defines the necessary query\nterm required to retrieve that item, such as *p0* for a priority item.\nThe integer value determines the ranking of that string value relative\nto other enumerated values for the same property. For example, you might\nassociate *p0* with *0* and define another enum pair such as *p1* and *1*.\nYou must use the integer value in combination with\nordered ranking\nto set the ranking of a given value relative to\nother enumerated values for the same property name. Here, a ranking order\nof DESCENDING for *priority* properties results in a ranking boost\nfor items indexed with a value of *p0* compared to items indexed with a\nvalue of *p1*. Without a specified ranking order, the integer value has no\neffect on item ranking.",
+      "type": "object"
+    },
+    "ObjectOptions": {
+      "properties": {
+        "freshnessOptions": {
+          "$ref": "FreshnessOptions",
+          "description": "The freshness options for an object."
+        }
+      },
+      "id": "ObjectOptions",
+      "description": "The options for an object.",
+      "type": "object"
+    },
+    "DriveTimeSpanRestrict": {
+      "description": "The time span search restrict (e.g. \"after:2017-09-11 before:2017-09-12\").",
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "UNSPECIFIED",
+            "TODAY",
+            "YESTERDAY",
+            "LAST_7_DAYS",
+            "LAST_30_DAYS",
+            "LAST_90_DAYS"
+          ],
+          "type": "string",
+          "enumDescriptions": [
+            "",
+            "",
+            "",
+            "",
+            "Not Enabled",
+            "Not Enabled"
+          ]
+        }
+      },
+      "id": "DriveTimeSpanRestrict"
+    },
+    "FacetOptions": {
+      "description": "Current implementation of FacetedSearch will support ranges only for\noperators on numeric date/time types. There will be one FacetResult for every\nsource_name/object_type/operator_name.",
+      "type": "object",
+      "properties": {
+        "operatorName": {
+          "description": "Name of the operator chosen for faceting. @see\ncloudsearch.SchemaPropertyOptions",
+          "type": "string"
+        },
+        "objectType": {
+          "description": "If object_type is set, only those objects of that type will be used to\ncompute facets. If empty, then all objects will be used to compute facets.",
+          "type": "string"
+        },
+        "sourceName": {
+          "description": "Source name to facet on.",
+          "type": "string"
+        }
+      },
+      "id": "FacetOptions"
+    },
+    "Person": {
+      "description": "Object to represent a person.",
+      "type": "object",
+      "properties": {
+        "photos": {
+          "description": "A person's read-only photo. A picture shown next to the person's name to\nhelp others recognize the person in search results.",
+          "type": "array",
+          "items": {
+            "$ref": "Photo"
+          }
+        },
+        "personNames": {
+          "description": "The person's name",
+          "type": "array",
+          "items": {
+            "$ref": "Name"
+          }
+        },
+        "emailAddresses": {
+          "description": "The person's email addresses",
+          "type": "array",
+          "items": {
+            "$ref": "EmailAddress"
+          }
+        },
+        "name": {
+          "description": "The resource name of the person to provide information about.\nSee \u003ca href=\"https://developers.google.com/people/api/rest/v1/people/get\"\u003e\nPeople.get\u003c/a\u003e from Google People API.",
+          "type": "string"
+        }
+      },
+      "id": "Person"
+    }
+  },
+  "icons": {
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+  },
+  "protocol": "rest",
+  "canonicalName": "Cloud Search",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/cloud_search": {
+          "description": "Index and serve your organization's data with Cloud Search"
+        },
+        "https://www.googleapis.com/auth/cloud_search.query": {
+          "description": "Search your organization's data in the Cloud Search index"
+        },
+        "https://www.googleapis.com/auth/cloud_search.indexing": {
+          "description": "New Service: https://www.googleapis.com/auth/cloud_search.indexing"
+        },
+        "https://www.googleapis.com/auth/cloud_search.settings.indexing": {
+          "description": "New Service: https://www.googleapis.com/auth/cloud_search.settings.indexing"
+        },
+        "https://www.googleapis.com/auth/cloud_search.settings": {
+          "description": "New Service: https://www.googleapis.com/auth/cloud_search.settings"
+        }
+      }
+    }
+  },
+  "rootUrl": "https://cloudsearch.googleapis.com/",
+  "ownerDomain": "google.com",
+  "name": "cloudsearch",
+  "batchPath": "batch",
+  "fullyEncodeReservedExpansion": true,
+  "title": "Cloud Search API",
+  "ownerName": "Google",
+  "resources": {
+    "settings": {
+      "resources": {
+        "datasources": {
+          "methods": {
+            "delete": {
+              "id": "cloudsearch.settings.datasources.delete",
+              "path": "v1beta1/settings/{+name}",
+              "description": "Deletes a data source",
+              "httpMethod": "DELETE",
+              "parameterOrder": [
+                "name"
+              ],
+              "response": {
+                "$ref": "Empty"
+              },
+              "parameters": {
+                "name": {
+                  "description": "Name of the data source.\nFormat: datasources/{source_id}.",
+                  "required": true,
+                  "type": "string",
+                  "pattern": "^datasources/[^/]+$",
+                  "location": "path"
+                }
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud_search",
+                "https://www.googleapis.com/auth/cloud_search.settings",
+                "https://www.googleapis.com/auth/cloud_search.settings.indexing"
+              ],
+              "flatPath": "v1beta1/settings/datasources/{datasourcesId}"
+            },
+            "get": {
+              "httpMethod": "GET",
+              "parameterOrder": [
+                "name"
+              ],
+              "response": {
+                "$ref": "DataSource"
+              },
+              "parameters": {
+                "name": {
+                  "description": "Name of the data source resource.\nFormat: datasources/{source_id}.",
+                  "required": true,
+                  "type": "string",
+                  "pattern": "^datasources/[^/]+$",
+                  "location": "path"
+                }
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud_search",
+                "https://www.googleapis.com/auth/cloud_search.settings",
+                "https://www.googleapis.com/auth/cloud_search.settings.indexing"
+              ],
+              "flatPath": "v1beta1/settings/datasources/{datasourcesId}",
+              "id": "cloudsearch.settings.datasources.get",
+              "path": "v1beta1/settings/{+name}",
+              "description": "Gets data source"
+            },
+            "list": {
+              "description": "Lists data source",
+              "response": {
+                "$ref": "ListDataSourceResponse"
+              },
+              "parameterOrder": [],
+              "httpMethod": "GET",
+              "parameters": {
+                "pageToken": {
+                  "location": "query",
+                  "description": "Starting index of the results.",
+                  "type": "string"
+                }
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud_search",
+                "https://www.googleapis.com/auth/cloud_search.settings",
+                "https://www.googleapis.com/auth/cloud_search.settings.indexing"
+              ],
+              "flatPath": "v1beta1/settings/datasources",
+              "path": "v1beta1/settings/datasources",
+              "id": "cloudsearch.settings.datasources.list"
+            },
+            "update": {
+              "request": {
+                "$ref": "UpdateDataSourceRequest"
+              },
+              "description": "Updates data source",
+              "response": {
+                "$ref": "DataSource"
+              },
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "PUT",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud_search",
+                "https://www.googleapis.com/auth/cloud_search.settings",
+                "https://www.googleapis.com/auth/cloud_search.settings.indexing"
+              ],
+              "parameters": {
+                "name": {
+                  "location": "path",
+                  "description": "Name of the data source resource.\nFormat: datasources/{source_id}.\n\u003cbr /\u003eThe name is ignored when creating a data source.",
+                  "required": true,
+                  "type": "string",
+                  "pattern": "^datasources/[^/]+$"
+                }
+              },
+              "flatPath": "v1beta1/settings/datasources/{datasourcesId}",
+              "path": "v1beta1/settings/{+name}",
+              "id": "cloudsearch.settings.datasources.update"
+            },
+            "create": {
+              "response": {
+                "$ref": "DataSource"
+              },
+              "parameterOrder": [],
+              "httpMethod": "POST",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud_search",
+                "https://www.googleapis.com/auth/cloud_search.settings",
+                "https://www.googleapis.com/auth/cloud_search.settings.indexing"
+              ],
+              "parameters": {},
+              "flatPath": "v1beta1/settings/datasources",
+              "path": "v1beta1/settings/datasources",
+              "id": "cloudsearch.settings.datasources.create",
+              "request": {
+                "$ref": "DataSource"
+              },
+              "description": "Data source\nCreate data source"
+            }
+          }
+        }
+      }
+    },
+    "indexing": {
+      "resources": {
+        "datasources": {
+          "methods": {
+            "getSchema": {
+              "response": {
+                "$ref": "Schema"
+              },
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "GET",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud_search",
+                "https://www.googleapis.com/auth/cloud_search.settings",
+                "https://www.googleapis.com/auth/cloud_search.settings.indexing"
+              ],
+              "parameters": {
+                "name": {
+                  "location": "path",
+                  "description": "Name of the data source to get Schema.  Format:\ndatasources/{source_id}",
+                  "required": true,
+                  "type": "string",
+                  "pattern": "^datasources/[^/]+$"
+                }
+              },
+              "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/schema",
+              "path": "v1beta1/indexing/{+name}/schema",
+              "id": "cloudsearch.indexing.datasources.getSchema",
+              "description": "Gets the schema of a data source."
+            },
+            "updateSchema": {
+              "httpMethod": "PUT",
+              "parameterOrder": [
+                "name"
+              ],
+              "response": {
+                "$ref": "Schema"
+              },
+              "parameters": {
+                "name": {
+                  "pattern": "^datasources/[^/]+$",
+                  "location": "path",
+                  "description": "Name of the data source to update Schema.  Format:\ndatasources/{source_id}",
+                  "required": true,
+                  "type": "string"
+                }
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud_search",
+                "https://www.googleapis.com/auth/cloud_search.settings",
+                "https://www.googleapis.com/auth/cloud_search.settings.indexing"
+              ],
+              "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/schema",
+              "id": "cloudsearch.indexing.datasources.updateSchema",
+              "path": "v1beta1/indexing/{+name}/schema",
+              "description": "Updates the schema of a data source.",
+              "request": {
+                "$ref": "UpdateSchemaRequest"
+              }
+            },
+            "deleteSchema": {
+              "response": {
+                "$ref": "Empty"
+              },
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "DELETE",
+              "scopes": [
+                "https://www.googleapis.com/auth/cloud_search",
+                "https://www.googleapis.com/auth/cloud_search.settings",
+                "https://www.googleapis.com/auth/cloud_search.settings.indexing"
+              ],
+              "parameters": {
+                "name": {
+                  "location": "path",
+                  "description": "Name of the data source to delete Schema.  Format:\ndatasources/{source_id}",
+                  "required": true,
+                  "type": "string",
+                  "pattern": "^datasources/[^/]+$"
+                }
+              },
+              "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/schema",
+              "path": "v1beta1/indexing/{+name}/schema",
+              "id": "cloudsearch.indexing.datasources.deleteSchema",
+              "description": "Deletes the schema of a data source."
+            }
+          },
+          "resources": {
+            "items": {
+              "methods": {
+                "delete": {
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "DELETE",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud_search",
+                    "https://www.googleapis.com/auth/cloud_search.indexing"
+                  ],
+                  "parameters": {
+                    "version": {
+                      "description": "Required. The incremented version of the item to delete from the index.\nThe indexing system stores the version from the datasource as a\nbyte string and compares the Item version in the index\nto the version of the queued Item using lexical ordering.\n\u003cbr /\u003e\u003cbr /\u003e\nCloud Search Indexing won't delete any queued item with\na version value that is less than or equal to\nthe version of the currently indexed item.\nThe maximum length for this field is 1024 bytes.",
+                      "format": "byte",
+                      "type": "string",
+                      "location": "query"
+                    },
+                    "name": {
+                      "location": "path",
+                      "description": "Required. Name of the item to delete.\nFormat: datasources/{source_id}/items/{item_id}",
+                      "required": true,
+                      "type": "string",
+                      "pattern": "^datasources/[^/]+/items/[^/]+$"
+                    }
+                  },
+                  "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/items/{itemsId}",
+                  "path": "v1beta1/indexing/{+name}",
+                  "id": "cloudsearch.indexing.datasources.items.delete",
+                  "description": "Deletes Item resource for the\nspecified resource name."
+                },
+                "push": {
+                  "httpMethod": "POST",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "parameters": {
+                    "name": {
+                      "pattern": "^datasources/[^/]+/items/[^/]+$",
+                      "location": "path",
+                      "description": "Name of the item to\npush into the indexing queue.\u003cbr /\u003e\nFormat: datasources/{source_id}/items/{ID}\n\u003cbr /\u003eThis is a required field.\nThe maximum length is 2048 characters.",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud_search",
+                    "https://www.googleapis.com/auth/cloud_search.indexing"
+                  ],
+                  "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/items/{itemsId}:push",
+                  "id": "cloudsearch.indexing.datasources.items.push",
+                  "path": "v1beta1/indexing/{+name}:push",
+                  "description": "Pushes an items onto a queue for later polling and updating.",
+                  "request": {
+                    "$ref": "PushItemRequest"
+                  }
+                },
+                "list": {
+                  "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/items",
+                  "path": "v1beta1/indexing/{+name}/items",
+                  "id": "cloudsearch.indexing.datasources.items.list",
+                  "description": "Lists all or a subset of Item resources.",
+                  "response": {
+                    "$ref": "ListItemsResponse"
+                  },
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "GET",
+                  "parameters": {
+                    "name": {
+                      "location": "path",
+                      "description": "Name of the Data Source to list Items.  Format:\ndatasources/{source_id}",
+                      "required": true,
+                      "type": "string",
+                      "pattern": "^datasources/[^/]+$"
+                    },
+                    "pageToken": {
+                      "location": "query",
+                      "description": "The next_page_token value returned from a previous List request, if any.",
+                      "type": "string"
+                    },
+                    "pageSize": {
+                      "location": "query",
+                      "description": "Maximum number of items to fetch in a request.\nThe max value is 10000 when brief is true.  The max value is 10 if brief\nis false.",
+                      "format": "int32",
+                      "type": "integer"
+                    },
+                    "brief": {
+                      "location": "query",
+                      "description": "When set to true, the indexing system only populates the following fields:\nname,\nversion,\nmetadata.hash,\nstructured_data.hash,\ncontent.hash.\n\u003cbr /\u003eIf this value is false, then all the fields are populated in Item.",
+                      "type": "boolean"
+                    }
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud_search",
+                    "https://www.googleapis.com/auth/cloud_search.indexing"
+                  ]
+                },
+                "upload": {
+                  "path": "v1beta1/indexing/{+name}:upload",
+                  "id": "cloudsearch.indexing.datasources.items.upload",
+                  "request": {
+                    "$ref": "StartUploadItemRequest"
+                  },
+                  "description": "Creates an upload session for uploading item content. For items smaller\nthan 100 KiB, it's easier to embed the content\ninline within\nindex.",
+                  "response": {
+                    "$ref": "UploadItemRef"
+                  },
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "POST",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud_search",
+                    "https://www.googleapis.com/auth/cloud_search.indexing"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "pattern": "^datasources/[^/]+/items/[^/]+$",
+                      "location": "path",
+                      "description": "Name of the Data Source to start a resumable upload.\nFormat: datasources/{source_id}",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/items/{itemsId}:upload"
+                },
+                "get": {
+                  "response": {
+                    "$ref": "Item"
+                  },
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "GET",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud_search",
+                    "https://www.googleapis.com/auth/cloud_search.indexing"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "description": "Name of the item to get info.\nFormat: datasources/{source_id}/items/{item_id}",
+                      "required": true,
+                      "type": "string",
+                      "pattern": "^datasources/[^/]+/items/[^/]+$",
+                      "location": "path"
+                    }
+                  },
+                  "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/items/{itemsId}",
+                  "path": "v1beta1/indexing/{+name}",
+                  "id": "cloudsearch.indexing.datasources.items.get",
+                  "description": "Gets Item resource by item name."
+                },
+                "unreserve": {
+                  "httpMethod": "POST",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "response": {
+                    "$ref": "Empty"
+                  },
+                  "parameters": {
+                    "name": {
+                      "pattern": "^datasources/[^/]+$",
+                      "location": "path",
+                      "description": "Name of the Data Source to unreserve all items.\nFormat: datasources/{source_id}",
+                      "required": true,
+                      "type": "string"
+                    }
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud_search",
+                    "https://www.googleapis.com/auth/cloud_search.indexing"
+                  ],
+                  "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/items:unreserve",
+                  "id": "cloudsearch.indexing.datasources.items.unreserve",
+                  "path": "v1beta1/indexing/{+name}/items:unreserve",
+                  "description": "Unreserves all items from a queue, making them all eligible to be\npolled.  This method is useful for resetting the indexing queue\nafter a connector has been restarted.",
+                  "request": {
+                    "$ref": "UnreserveItemsRequest"
+                  }
+                },
+                "index": {
+                  "response": {
+                    "$ref": "Item"
+                  },
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "httpMethod": "POST",
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud_search",
+                    "https://www.googleapis.com/auth/cloud_search.indexing"
+                  ],
+                  "parameters": {
+                    "name": {
+                      "required": true,
+                      "type": "string",
+                      "pattern": "^datasources/[^/]+/items/[^/]+$",
+                      "location": "path",
+                      "description": "Name of the Item. Format:\ndatasources/{source_id}/items/{item_id}\n\u003cbr /\u003eThis is a required field.\nThe maximum length is 2048 characters."
+                    }
+                  },
+                  "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/items/{itemsId}:index",
+                  "path": "v1beta1/indexing/{+name}:index",
+                  "id": "cloudsearch.indexing.datasources.items.index",
+                  "request": {
+                    "$ref": "IndexItemRequest"
+                  },
+                  "description": "Updates Item ACL, metadata, and\ncontent. It will insert the Item if it\ndoes not exist.\nThis method does not support partial updates.  Fields with no provided\nvalues are cleared out in the Cloud Search index."
+                },
+                "poll": {
+                  "id": "cloudsearch.indexing.datasources.items.poll",
+                  "path": "v1beta1/indexing/{+name}/items:poll",
+                  "description": "Polls for unreserved items from the indexing queue and marks a\nset as reserved, starting with items that have\nthe oldest timestamp from the highest priority\nItemStatus.\nThe priority order is as follows: \u003cbr /\u003e\nERROR\n\u003cbr /\u003e\nMODIFIED\n\u003cbr /\u003e\nNEW_ITEM\n\u003cbr /\u003e\nACCEPTED\n\u003cbr /\u003e\nReserving items ensures that polling from other threads\ncannot create overlapping sets.\n\nAfter handling the reserved items, the client should put items back\ninto the unreserved state, either by calling\nindex,\nor by calling\npush with\nthe type REQUEUE.\n\nItems automatically become available (unreserved) after 4 hours even if no\nupdate or push method is called.",
+                  "request": {
+                    "$ref": "PollItemsRequest"
+                  },
+                  "httpMethod": "POST",
+                  "parameterOrder": [
+                    "name"
+                  ],
+                  "response": {
+                    "$ref": "PollItemsResponse"
+                  },
+                  "parameters": {
+                    "name": {
+                      "description": "Name of the Data Source to poll items.\nFormat: datasources/{source_id}",
+                      "required": true,
+                      "type": "string",
+                      "pattern": "^datasources/[^/]+$",
+                      "location": "path"
+                    }
+                  },
+                  "scopes": [
+                    "https://www.googleapis.com/auth/cloud_search",
+                    "https://www.googleapis.com/auth/cloud_search.indexing"
+                  ],
+                  "flatPath": "v1beta1/indexing/datasources/{datasourcesId}/items:poll"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "query": {
+      "methods": {
+        "suggest": {
+          "path": "v1beta1/query/suggest",
+          "id": "cloudsearch.query.suggest",
+          "description": "The Cloud Search Query API provides suggested text\nquery completions and people query suggestions.",
+          "request": {
+            "$ref": "SuggestRequest"
+          },
+          "response": {
+            "$ref": "SuggestResponse"
+          },
+          "parameterOrder": [],
+          "httpMethod": "POST",
+          "parameters": {},
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud_search",
+            "https://www.googleapis.com/auth/cloud_search.query"
+          ],
+          "flatPath": "v1beta1/query/suggest"
+        },
+        "search": {
+          "description": "The Cloud Search Query API provides the search method, which returns\nthe most relevant results from a user query.  The results can come from\nG Suite Apps, such as Gmail or Google Drive, or they can come from data\nthat you have indexed from a third party.",
+          "request": {
+            "$ref": "SearchRequest"
+          },
+          "response": {
+            "$ref": "SearchResponse"
+          },
+          "parameterOrder": [],
+          "httpMethod": "POST",
+          "parameters": {},
+          "scopes": [
+            "https://www.googleapis.com/auth/cloud_search",
+            "https://www.googleapis.com/auth/cloud_search.query"
+          ],
+          "flatPath": "v1beta1/query/search",
+          "path": "v1beta1/query/search",
+          "id": "cloudsearch.query.search"
+        }
+      }
+    }
+  },
+  "parameters": {
+    "fields": {
+      "location": "query",
+      "description": "Selector specifying which fields to include in a partial response.",
+      "type": "string"
+    },
+    "uploadType": {
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "type": "string",
+      "location": "query"
+    },
+    "callback": {
+      "location": "query",
+      "description": "JSONP",
+      "type": "string"
+    },
+    "oauth_token": {
+      "location": "query",
+      "description": "OAuth 2.0 token for the current user.",
+      "type": "string"
+    },
+    "$.xgafv": {
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query",
+      "enum": [
+        "1",
+        "2"
+      ],
+      "description": "V1 error format.",
+      "type": "string"
+    },
+    "alt": {
+      "description": "Data format for response.",
+      "default": "json",
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "type": "string",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query"
+    },
+    "access_token": {
+      "description": "OAuth access token.",
+      "type": "string",
+      "location": "query"
+    },
+    "key": {
+      "location": "query",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "type": "string"
+    },
+    "upload_protocol": {
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "type": "string",
+      "location": "query"
+    },
+    "prettyPrint": {
+      "description": "Returns response with indentations and line breaks.",
+      "type": "boolean",
+      "default": "true",
+      "location": "query"
+    },
+    "quotaUser": {
+      "location": "query",
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "type": "string"
+    }
+  }
+}

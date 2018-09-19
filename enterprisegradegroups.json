@@ -1,0 +1,541 @@
+{
+  "discoveryVersion": "v1",
+  "version_module": true,
+  "schemas": {
+    "ListGroupsResponse": {
+      "type": "object",
+      "properties": {
+        "resources": {
+          "type": "array",
+          "items": {
+            "$ref": "Group"
+          }
+        },
+        "nextPageToken": {
+          "type": "string"
+        }
+      },
+      "id": "ListGroupsResponse"
+    },
+    "Member": {
+      "description": "Member Resource.\nNext available id: 5",
+      "type": "object",
+      "properties": {
+        "role": {
+          "enum": [
+            "UNKNOWN_ROLE",
+            "MEMBER",
+            "OWNER",
+            "MANAGER"
+          ],
+          "description": "Role of the member",
+          "type": "string",
+          "enumDescriptions": [
+            "",
+            "This role can subscribe to a group, and view the\ngroup's membership list. The API returns an error for cycles in group\nmemberships. For example, if group1 is a member of group2, group2 cannot be\na member of group1.",
+            "This role can add or remove members, change\nmember roles, change group's settings, and delete the group. An OWNER must\nbe a member of the group. A group can have more than one OWNER.",
+            "A MANAGER role can do everything done by an OWNER role except make a member\nan OWNER or delete the group. A group can have multiple MANAGER members"
+          ]
+        },
+        "memberKey": {
+          "description": "Many times key will be email of a member but its not mandatory to\nhave this key always in email format. Currently we support only\nemail but it will soon support arbitrary strings as key.\nThis is an immutable field. It cannot be changed in UpdateMemberRequest.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Unique identifier of Member (Read-only)",
+          "type": "string"
+        },
+        "type": {
+          "enumDescriptions": [
+            "",
+            "",
+            "",
+            "For a member who is not within the same customer as the given group,\nwe should not reveal the type."
+          ],
+          "enum": [
+            "UNKNOWN_TYPE",
+            "USER",
+            "GROUP",
+            "EXTERNAL"
+          ],
+          "description": "Type of the member.",
+          "type": "string"
+        }
+      },
+      "id": "Member"
+    },
+    "Group": {
+      "properties": {
+        "groupKey": {
+          "description": "Many times key will be email of a group but its not mandatory to\nhave this key always in email format. Currently we support only\nemail but it will soon support arbitrary strings as key. (Required)",
+          "type": "string"
+        },
+        "name": {
+          "description": "Unique identifier of Group (Read-only)",
+          "type": "string"
+        },
+        "displayName": {
+          "description": "Group name",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description of the group. Maximum length is 4,096 characters.",
+          "type": "string"
+        }
+      },
+      "id": "Group",
+      "description": "Group Resource.\nNext available id: 5",
+      "type": "object"
+    },
+    "IsMemberResponse": {
+      "properties": {
+        "isMember": {
+          "type": "boolean"
+        }
+      },
+      "id": "IsMemberResponse",
+      "type": "object"
+    },
+    "ListMembersResponse": {
+      "properties": {
+        "nextPageToken": {
+          "type": "string"
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "$ref": "Member"
+          }
+        }
+      },
+      "id": "ListMembersResponse",
+      "type": "object"
+    },
+    "Empty": {
+      "description": "A generic empty message that you can re-use to avoid defining duplicated\nempty messages in your APIs. A typical example is to use it as the request\nor the response type of an API method. For instance:\n\n    service Foo {\n      rpc Bar(google.protobuf.Empty) returns (google.protobuf.Empty);\n    }\n\nThe JSON representation for `Empty` is empty JSON object `{}`.",
+      "type": "object",
+      "properties": {},
+      "id": "Empty"
+    }
+  },
+  "icons": {
+    "x32": "http://www.google.com/images/icons/product/search-32.gif",
+    "x16": "http://www.google.com/images/icons/product/search-16.gif"
+  },
+  "protocol": "rest",
+  "canonicalName": "Enterprise Grade Groups",
+  "auth": {
+    "oauth2": {
+      "scopes": {
+        "https://www.googleapis.com/auth/admin.directory.group": {
+          "description": "View and manage the provisioning of groups on your domain"
+        }
+      }
+    }
+  },
+  "rootUrl": "https://groups.googleapis.com/",
+  "ownerDomain": "google.com",
+  "name": "groups",
+  "batchPath": "batch",
+  "fullyEncodeReservedExpansion": true,
+  "title": "Enterprise Grade Groups Service",
+  "ownerName": "Google",
+  "resources": {
+    "groups": {
+      "methods": {
+        "create": {
+          "description": "Creates a Group",
+          "request": {
+            "$ref": "Group"
+          },
+          "response": {
+            "$ref": "Group"
+          },
+          "parameterOrder": [],
+          "httpMethod": "POST",
+          "parameters": {},
+          "scopes": [
+            "https://www.googleapis.com/auth/admin.directory.group"
+          ],
+          "flatPath": "v1alpha/groups",
+          "path": "v1alpha/groups",
+          "id": "groups.groups.create"
+        },
+        "delete": {
+          "description": "Delete a Group",
+          "response": {
+            "$ref": "Empty"
+          },
+          "parameterOrder": [
+            "name"
+          ],
+          "httpMethod": "DELETE",
+          "scopes": [
+            "https://www.googleapis.com/auth/admin.directory.group"
+          ],
+          "parameters": {
+            "name": {
+              "pattern": "^groups/[^/]+$",
+              "location": "path",
+              "required": true,
+              "type": "string"
+            }
+          },
+          "flatPath": "v1alpha/groups/{groupsId}",
+          "path": "v1alpha/{+name}",
+          "id": "groups.groups.delete"
+        },
+        "get": {
+          "response": {
+            "$ref": "Group"
+          },
+          "parameterOrder": [
+            "name"
+          ],
+          "httpMethod": "GET",
+          "scopes": [
+            "https://www.googleapis.com/auth/admin.directory.group"
+          ],
+          "parameters": {
+            "name": {
+              "required": true,
+              "type": "string",
+              "pattern": "^groups/[^/]+$",
+              "location": "path"
+            }
+          },
+          "flatPath": "v1alpha/groups/{groupsId}",
+          "path": "v1alpha/{+name}",
+          "id": "groups.groups.get",
+          "description": "Gets a Group for given group key."
+        },
+        "list": {
+          "response": {
+            "$ref": "ListGroupsResponse"
+          },
+          "parameterOrder": [],
+          "httpMethod": "GET",
+          "scopes": [
+            "https://www.googleapis.com/auth/admin.directory.group"
+          ],
+          "parameters": {
+            "userKey": {
+              "location": "query",
+              "description": "If user_key is set, result contains list of all Groups for this\nuser or group. This value can be any of the user's primary or alias email\naddress, a group's primary or alias email address, or a user's unique ID.",
+              "type": "string"
+            },
+            "domainName": {
+              "description": "If domain is set, result contains list of all Groups for this domain.",
+              "type": "string",
+              "location": "query"
+            },
+            "pageToken": {
+              "location": "query",
+              "description": "Token to specify next page in the list.",
+              "type": "string"
+            },
+            "pageSize": {
+              "description": "Maximum number of groups to fetch in a request.\nThe max value is 200 and default value is 100.",
+              "format": "int32",
+              "type": "integer",
+              "location": "query"
+            }
+          },
+          "flatPath": "v1alpha/groups",
+          "path": "v1alpha/groups",
+          "id": "groups.groups.list",
+          "description": "List all Groups."
+        },
+        "patch": {
+          "path": "v1alpha/{+name}",
+          "id": "groups.groups.patch",
+          "description": "Updates a Group",
+          "request": {
+            "$ref": "Group"
+          },
+          "response": {
+            "$ref": "Group"
+          },
+          "parameterOrder": [
+            "name"
+          ],
+          "httpMethod": "PATCH",
+          "parameters": {
+            "name": {
+              "pattern": "^groups/[^/]+$",
+              "location": "path",
+              "required": true,
+              "type": "string"
+            }
+          },
+          "scopes": [
+            "https://www.googleapis.com/auth/admin.directory.group"
+          ],
+          "flatPath": "v1alpha/groups/{groupsId}"
+        }
+      },
+      "resources": {
+        "members": {
+          "methods": {
+            "delete": {
+              "response": {
+                "$ref": "Empty"
+              },
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "DELETE",
+              "parameters": {
+                "name": {
+                  "required": true,
+                  "type": "string",
+                  "pattern": "^groups/[^/]+/members/[^/]+$",
+                  "location": "path"
+                }
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/admin.directory.group"
+              ],
+              "flatPath": "v1alpha/groups/{groupsId}/members/{membersId}",
+              "path": "v1alpha/{+name}",
+              "id": "groups.groups.members.delete",
+              "description": "Delete a member."
+            },
+            "list": {
+              "response": {
+                "$ref": "ListMembersResponse"
+              },
+              "parameterOrder": [
+                "parent"
+              ],
+              "httpMethod": "GET",
+              "parameters": {
+                "pageToken": {
+                  "location": "query",
+                  "type": "string"
+                },
+                "pageSize": {
+                  "format": "int32",
+                  "type": "integer",
+                  "location": "query"
+                },
+                "parent": {
+                  "pattern": "^groups/[^/]+$",
+                  "location": "path",
+                  "required": true,
+                  "type": "string"
+                }
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/admin.directory.group"
+              ],
+              "flatPath": "v1alpha/groups/{groupsId}/members",
+              "path": "v1alpha/{+parent}/members",
+              "id": "groups.groups.members.list",
+              "description": "List all members for a given group."
+            },
+            "create": {
+              "description": "Inserts a Member to Group",
+              "request": {
+                "$ref": "Member"
+              },
+              "response": {
+                "$ref": "Member"
+              },
+              "parameterOrder": [
+                "parent"
+              ],
+              "httpMethod": "POST",
+              "parameters": {
+                "parent": {
+                  "required": true,
+                  "type": "string",
+                  "pattern": "^groups/[^/]+$",
+                  "location": "path"
+                }
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/admin.directory.group"
+              ],
+              "flatPath": "v1alpha/groups/{groupsId}/members",
+              "path": "v1alpha/{+parent}/members",
+              "id": "groups.groups.members.create"
+            },
+            "isMember": {
+              "response": {
+                "$ref": "IsMemberResponse"
+              },
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "GET",
+              "parameters": {
+                "name": {
+                  "required": true,
+                  "type": "string",
+                  "pattern": "^groups/[^/]+/members/[^/]+$",
+                  "location": "path"
+                }
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/admin.directory.group"
+              ],
+              "flatPath": "v1alpha/groups/{groupsId}/members/{membersId}:isMember",
+              "path": "v1alpha/{+name}:isMember",
+              "id": "groups.groups.members.isMember",
+              "description": "Returns whether a given Group has a given member."
+            },
+            "get": {
+              "response": {
+                "$ref": "Member"
+              },
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "GET",
+              "parameters": {
+                "name": {
+                  "pattern": "^groups/[^/]+/members/[^/]+$",
+                  "location": "path",
+                  "required": true,
+                  "type": "string"
+                }
+              },
+              "scopes": [
+                "https://www.googleapis.com/auth/admin.directory.group"
+              ],
+              "flatPath": "v1alpha/groups/{groupsId}/members/{membersId}",
+              "path": "v1alpha/{+name}",
+              "id": "groups.groups.members.get",
+              "description": "Gets a membership for given group_key - member_key pair."
+            },
+            "patch": {
+              "request": {
+                "$ref": "Member"
+              },
+              "description": "Updates a membership",
+              "response": {
+                "$ref": "Member"
+              },
+              "parameterOrder": [
+                "name"
+              ],
+              "httpMethod": "PATCH",
+              "scopes": [
+                "https://www.googleapis.com/auth/admin.directory.group"
+              ],
+              "parameters": {
+                "name": {
+                  "pattern": "^groups/[^/]+/members/[^/]+$",
+                  "location": "path",
+                  "required": true,
+                  "type": "string"
+                }
+              },
+              "flatPath": "v1alpha/groups/{groupsId}/members/{membersId}",
+              "path": "v1alpha/{+name}",
+              "id": "groups.groups.members.patch"
+            }
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "upload_protocol": {
+      "location": "query",
+      "description": "Upload protocol for media (e.g. \"raw\", \"multipart\").",
+      "type": "string"
+    },
+    "prettyPrint": {
+      "location": "query",
+      "description": "Returns response with indentations and line breaks.",
+      "type": "boolean",
+      "default": "true"
+    },
+    "fields": {
+      "description": "Selector specifying which fields to include in a partial response.",
+      "type": "string",
+      "location": "query"
+    },
+    "uploadType": {
+      "location": "query",
+      "description": "Legacy upload protocol for media (e.g. \"media\", \"multipart\").",
+      "type": "string"
+    },
+    "callback": {
+      "description": "JSONP",
+      "type": "string",
+      "location": "query"
+    },
+    "$.xgafv": {
+      "enum": [
+        "1",
+        "2"
+      ],
+      "description": "V1 error format.",
+      "type": "string",
+      "enumDescriptions": [
+        "v1 error format",
+        "v2 error format"
+      ],
+      "location": "query"
+    },
+    "alt": {
+      "enum": [
+        "json",
+        "media",
+        "proto"
+      ],
+      "type": "string",
+      "enumDescriptions": [
+        "Responses with Content-Type of application/json",
+        "Media download with context-dependent Content-Type",
+        "Responses with Content-Type of application/x-protobuf"
+      ],
+      "location": "query",
+      "description": "Data format for response.",
+      "default": "json"
+    },
+    "key": {
+      "location": "query",
+      "description": "API key. Your API key identifies your project and provides you with API access, quota, and reports. Required unless you provide an OAuth 2.0 token.",
+      "type": "string"
+    },
+    "access_token": {
+      "description": "OAuth access token.",
+      "type": "string",
+      "location": "query"
+    },
+    "quotaUser": {
+      "description": "Available to use for quota purposes for server-side applications. Can be any arbitrary string assigned to a user, but should not exceed 40 characters.",
+      "type": "string",
+      "location": "query"
+    },
+    "pp": {
+      "location": "query",
+      "description": "Pretty-print response.",
+      "type": "boolean",
+      "default": "true"
+    },
+    "bearer_token": {
+      "location": "query",
+      "description": "OAuth bearer token.",
+      "type": "string"
+    },
+    "oauth_token": {
+      "description": "OAuth 2.0 token for the current user.",
+      "type": "string",
+      "location": "query"
+    }
+  },
+  "version": "v1alpha",
+  "baseUrl": "https://groups.googleapis.com/",
+  "servicePath": "",
+  "description": "Enterprise Grade Groups Service to perform CRUD operations on groups and group memberships.",
+  "kind": "discovery#restDescription",
+  "basePath": "",
+  "id": "groups:v1alpha",
+  "documentationLink": "https://developers.google.com/admin-sdk/",
+  "revision": "20180520"
+}
