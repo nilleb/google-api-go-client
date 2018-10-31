@@ -293,7 +293,8 @@ func (s *LookupGroupNameResponse) MarshalJSON() ([]byte, error) {
 
 type LookupMembershipNameResponse struct {
 	// Name: [Resource
-	// name](https://cloud.google.com/apis/design/resource_names) of the
+	// name](https://cloud.google.com/apis/design/resource_names) of
+	// the
 	// Membership being looked up.
 	//
 	// Format: `groups/{group_id}/memberships/{member_id}`, where `group_id`
@@ -1657,7 +1658,7 @@ func (c *GroupsMembershipsCreateCall) Do(opts ...googleapi.CallOption) (*Operati
 	//   ],
 	//   "parameters": {
 	//     "parent": {
-	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the Group to create Membership within.\nFormat: `groups/{group_id}`, where `group_id` is the unique id assigned to the Group.",
+	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the\nGroup to create Membership within. Format: `groups/{group_id}`, where\n`group_id` is the unique id assigned to the Group.",
 	//       "location": "path",
 	//       "pattern": "^groups/[^/]+$",
 	//       "required": true,
@@ -1782,7 +1783,7 @@ func (c *GroupsMembershipsDeleteCall) Do(opts ...googleapi.CallOption) (*Operati
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the Membership to be deleted.\n\nFormat: `groups/{group_id}/memberships/{member_id}`, where `group_id` is the unique id\nassigned to the Group to which Membership belongs to, and member_id is\nthe unique id assigned to the member.",
+	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the\nMembership to be deleted.\n\nFormat: `groups/{group_id}/memberships/{member_id}`, where `group_id` is\nthe unique id assigned to the Group to which Membership belongs to, and\nmember_id is the unique id assigned to the member.",
 	//       "location": "path",
 	//       "pattern": "^groups/[^/]+/memberships/[^/]+$",
 	//       "required": true,
@@ -1918,7 +1919,7 @@ func (c *GroupsMembershipsGetCall) Do(opts ...googleapi.CallOption) (*Membership
 	//   ],
 	//   "parameters": {
 	//     "name": {
-	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the Membership to be retrieved.\n\nFormat: `groups/{group_id}/memberships/{member_id}`, where `group_id` is the unique id\nassigned to the Group to which Membership belongs to, and `member_id` is\nthe unique id assigned to the member.",
+	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the\nMembership to be retrieved.\n\nFormat: `groups/{group_id}/memberships/{member_id}`, where `group_id` is\nthe unique id assigned to the Group to which Membership belongs to, and\n`member_id` is the unique id assigned to the member.",
 	//       "location": "path",
 	//       "pattern": "^groups/[^/]+/memberships/[^/]+$",
 	//       "required": true,
@@ -2095,7 +2096,7 @@ func (c *GroupsMembershipsListCall) Do(opts ...googleapi.CallOption) (*ListMembe
 	//       "type": "string"
 	//     },
 	//     "parent": {
-	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the Group to list Memberships within.\n\nFormat: `groups/{group_id}`, where `group_id` is the unique id assigned to\nthe Group.",
+	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the\nGroup to list Memberships within.\n\nFormat: `groups/{group_id}`, where `group_id` is the unique id assigned to\nthe Group.",
 	//       "location": "path",
 	//       "pattern": "^groups/[^/]+$",
 	//       "required": true,
@@ -2151,9 +2152,11 @@ type GroupsMembershipsLookupCall struct {
 	header_      http.Header
 }
 
-// Lookup: Looks up [resource
-// name](https://cloud.google.com/apis/design/resource_names)
-// of a Membership within a Group by member's EntityKey.
+// Lookup: Looks up
+// [resource
+// name](https://cloud.google.com/apis/design/resource_names) of a
+// Membership
+// within a Group by member's EntityKey.
 func (r *GroupsMembershipsService) Lookup(parent string) *GroupsMembershipsLookupCall {
 	c := &GroupsMembershipsLookupCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.parent = parent
@@ -2277,7 +2280,7 @@ func (c *GroupsMembershipsLookupCall) Do(opts ...googleapi.CallOption) (*LookupM
 	}
 	return ret, nil
 	// {
-	//   "description": "Looks up [resource name](https://cloud.google.com/apis/design/resource_names)\nof a Membership within a Group by member's EntityKey.",
+	//   "description": "Looks up [resource\nname](https://cloud.google.com/apis/design/resource_names) of a Membership\nwithin a Group by member's EntityKey.",
 	//   "flatPath": "v1beta1/groups/{groupsId}/memberships:lookup",
 	//   "httpMethod": "GET",
 	//   "id": "cloudidentity.groups.memberships.lookup",
@@ -2296,7 +2299,7 @@ func (c *GroupsMembershipsLookupCall) Do(opts ...googleapi.CallOption) (*LookupM
 	//       "type": "string"
 	//     },
 	//     "parent": {
-	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the Group to lookup Membership within.\n\nFormat: `groups/{group_id}`, where `group_id` is the unique id assigned to the Group.",
+	//       "description": "[Resource name](https://cloud.google.com/apis/design/resource_names) of the\nGroup to lookup Membership within.\n\nFormat: `groups/{group_id}`, where `group_id` is the unique id assigned to\nthe Group.",
 	//       "location": "path",
 	//       "pattern": "^groups/[^/]+$",
 	//       "required": true,

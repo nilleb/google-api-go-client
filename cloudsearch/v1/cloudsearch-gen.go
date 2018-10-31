@@ -452,12 +452,13 @@ func (s *CompositeFilter) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// CustomerIndexStats: Aggregation of items by status code as of the
+// specified date.
 type CustomerIndexStats struct {
-	// Date: Date for which index stats were calculated. Stats calculated on
-	// the next
-	// day close to midnight are returned.
+	// Date: Date for which statistics were calculated.
 	Date *Date `json:"date,omitempty"`
 
+	// ItemCountByStatus: Number of items aggregrated by status code.
 	ItemCountByStatus []*ItemCountByStatus `json:"itemCountByStatus,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Date") to
@@ -496,16 +497,14 @@ type DataSource struct {
 	// accepted data.
 	DisableModifications bool `json:"disableModifications,omitempty"`
 
-	// DisableServing: Disable serving any search or assist
-	// results.
-	// Disabling serving does not imply disabling API call.
+	// DisableServing: Disable serving any search or assist results.
 	DisableServing bool `json:"disableServing,omitempty"`
 
 	// DisplayName: Required. Display name of the data source
 	// The maximum length is 300 characters.
 	DisplayName string `json:"displayName,omitempty"`
 
-	// IndexingServiceAccounts: List of service accounts that has indexing
+	// IndexingServiceAccounts: List of service accounts that have indexing
 	// access.
 	IndexingServiceAccounts []string `json:"indexingServiceAccounts,omitempty"`
 
@@ -513,13 +512,13 @@ type DataSource struct {
 	// level to the
 	// disjunction of users/groups mentioned with the field. Note that,
 	// this
-	// does not ensure access to a specific item, as the users needs to have
+	// does not ensure access to a specific item, as users need to have
 	// ACL
-	// permissions on the item too. This ensures a high level access on the
-	// entire
-	// data source, and that the individual items are not shared outside
-	// this
-	// visibility.
+	// permissions on the contained items. This ensures a high level
+	// access
+	// on the entire data source, and that the individual items are not
+	// shared
+	// outside this visibility.
 	ItemsVisibility []*GSuitePrincipal `json:"itemsVisibility,omitempty"`
 
 	// Name: Name of the data source resource.
@@ -576,6 +575,8 @@ func (s *DataSource) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// DataSourceIndexStats: Aggregation of items by status code as of the
+// specified date.
 type DataSourceIndexStats struct {
 	// Date: Date for which index stats were calculated. If the date of
 	// request is not
@@ -586,6 +587,7 @@ type DataSourceIndexStats struct {
 	// current date, then real time stats are returned.
 	Date *Date `json:"date,omitempty"`
 
+	// ItemCountByStatus: Number of items aggregrated by status code.
 	ItemCountByStatus []*ItemCountByStatus `json:"itemCountByStatus,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Date") to
@@ -613,7 +615,12 @@ func (s *DataSourceIndexStats) MarshalJSON() ([]byte, error) {
 
 // DataSourceRestriction: Restriction on Datasource.
 type DataSourceRestriction struct {
-	// FilterOptions: Filter options.
+	// FilterOptions: Filter options restricting the results. If multiple
+	// filters
+	// are present, they are grouped by object type before joining.
+	// Filters with the same object type are joined conjunctively, then
+	// the resulting expressions are joined disjunctively.
+	//
 	// The maximum number of elements is 20.
 	FilterOptions []*FilterOptions `json:"filterOptions,omitempty"`
 
@@ -653,9 +660,7 @@ type Date struct {
 	// month.
 	Day int64 `json:"day,omitempty"`
 
-	// Month: Month of year. Must be from 1 to 12, or 0 if specifying a year
-	// without a
-	// month and day.
+	// Month: Month of date. Must be from 1 to 12.
 	Month int64 `json:"month,omitempty"`
 
 	// Year: Year of date. Must be from 1 to 9999.
@@ -822,10 +827,45 @@ func (s *DateValues) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
+// DebugOptions: Shared request debug options for all cloudsearch RPC
+// methods.
+type DebugOptions struct {
+	// EnableDebugging: If set, the request will enable debugging features
+	// of Cloud Search.
+	// Only turn on this field, if asked by Google to help with debugging.
+	EnableDebugging bool `json:"enableDebugging,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "EnableDebugging") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "EnableDebugging") to
+	// include in API requests with the JSON null value. By default, fields
+	// with empty values are omitted from API requests. However, any field
+	// with an empty value appearing in NullFields will be sent to the
+	// server as null. It is an error if a field in this list has a
+	// non-empty value. This may be used to include null fields in Patch
+	// requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *DebugOptions) MarshalJSON() ([]byte, error) {
+	type NoMethod DebugOptions
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
+}
+
 type DeleteQueueItemsRequest struct {
 	// ConnectorName: Name of connector making this call.
 	// <br />Format: datasources/{source_id}/connectors/{ID}
 	ConnectorName string `json:"connectorName,omitempty"`
+
+	// DebugOptions: Common debug options.
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
 
 	// Queue: Name of a queue to delete items from.
 	Queue string `json:"queue,omitempty"`
@@ -1464,8 +1504,6 @@ type FacetBucket struct {
 	// This may not be accurate and is a best effort estimate.
 	Percentage int64 `json:"percentage,omitempty"`
 
-	Range *Range `json:"range,omitempty"`
-
 	Value *Value `json:"value,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g. "Count") to
@@ -1491,11 +1529,10 @@ func (s *FacetBucket) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
-// FacetOptions: Current implementation of FacetedSearch will support
-// ranges only for
-// operators on numeric date/time types. There will be one FacetResult
-// for every
-// source_name/object_type/operator_name.
+// FacetOptions: Specifies operators to return facet results for. There
+// will be one
+// FacetResult for every source_name/object_type/operator_name
+// combination.
 type FacetOptions struct {
 	// ObjectType: If object_type is set, only those objects of that type
 	// will be used to
@@ -1780,6 +1817,8 @@ func (s *GSuitePrincipal) MarshalJSON() ([]byte, error) {
 }
 
 type GetCustomerIndexStatsResponse struct {
+	// Stats: Summary of indexed item counts, one for each day in the
+	// requested range.
 	Stats []*CustomerIndexStats `json:"stats,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
@@ -1810,6 +1849,8 @@ func (s *GetCustomerIndexStatsResponse) MarshalJSON() ([]byte, error) {
 }
 
 type GetDataSourceIndexStatsResponse struct {
+	// Stats: Summary of indexed item counts, one for each day in the
+	// requested range.
 	Stats []*DataSourceIndexStats `json:"stats,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
@@ -1955,6 +1996,9 @@ type IndexItemRequest struct {
 	// ConnectorName: Name of connector making this call.
 	// <br />Format: datasources/{source_id}/connectors/{ID}
 	ConnectorName string `json:"connectorName,omitempty"`
+
+	// DebugOptions: Common debug options.
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
 
 	// Item: Name of the item.
 	// Format:
@@ -2341,14 +2385,11 @@ type ItemAcl struct {
 	// field both permit read access.
 	AclInheritanceType string `json:"aclInheritanceType,omitempty"`
 
-	// DeniedReaders: List of readers denied access.  This is a list
-	// of
-	// principals who shouldn't be allowed read/write access to the
-	// document
-	// and should therefore not see that document in search results.
-	// This list overrides access for any corresponding principals in the
+	// DeniedReaders: List of principals who are explicitly denied access to
+	// the item in search
+	// results. While principals are denied access by default, use denied
 	// readers
-	// field.
+	// to handle exceptions and override the list allowed readers.
 	// The maximum number of elements is 100.
 	DeniedReaders []*Principal `json:"deniedReaders,omitempty"`
 
@@ -2374,27 +2415,18 @@ type ItemAcl struct {
 
 	// Owners: Optional. List of owners for the item. This field has no
 	// bearing on
-	// document access permissions currently. It does, however, supply
-	// the capabilities for the `from:` and `owner:` query operators for
-	// this
-	// document. For example, all of the following queries can be used
-	// to
-	// match documents with supplied owners fields: "owner:me",
-	// "from:username",
-	// "owner:username@example.com." Slight ranking boosts also occur
-	// for
-	// documents for which the search user is an owner.
+	// document access permissions. It does, however, offer
+	// a slight ranking boosts items where the querying user is an
+	// owner.
 	// The maximum number of elements is 5.
 	Owners []*Principal `json:"owners,omitempty"`
 
-	// Readers: List of readers with access. Required if the item is not a
-	// container
-	// and no
-	// inheritAclFrom field
-	// is set. This is a list of
-	// principals who should be allowed read/write access to the
-	// document
-	// and should therefore see that document in search results.
+	// Readers: List of principals who are allowed to see the item in search
+	// results.
+	// Optional if inheriting permissions from another item or if the
+	// item
+	// is not intended to be visible, such as
+	// virtual containers.
 	// The maximum number of elements is 1000.
 	Readers []*Principal `json:"readers,omitempty"`
 
@@ -2473,10 +2505,10 @@ func (s *ItemContent) MarshalJSON() ([]byte, error) {
 }
 
 type ItemCountByStatus struct {
-	// Count: Count of items for the status.
+	// Count: Number of items matching the status code.
 	Count int64 `json:"count,omitempty,string"`
 
-	// StatusCode: Item Status
+	// StatusCode: Status of the items.
 	//
 	// Possible values:
 	//   "CODE_UNSPECIFIED" - Input-only value.  Used with
@@ -2584,7 +2616,7 @@ type ItemMetadata struct {
 	// The maximum length is 256 characters.
 	ObjectType string `json:"objectType,omitempty"`
 
-	// SearchQualityMetadata: Search Quality metadata of the item.
+	// SearchQualityMetadata: Additional search quality metadata of the item
 	SearchQualityMetadata *SearchQualityMetadata `json:"searchQualityMetadata,omitempty"`
 
 	// SourceRepositoryUrl: Link to the source repository serving the data.
@@ -3533,6 +3565,9 @@ type PollItemsRequest struct {
 	// <br />Format: datasources/{source_id}/connectors/{ID}
 	ConnectorName string `json:"connectorName,omitempty"`
 
+	// DebugOptions: Common debug options.
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
+
 	// Limit: Maximum number of items to return.
 	// <br />The maximum and the default value is 1000
 	Limit int64 `json:"limit,omitempty"`
@@ -3990,6 +4025,9 @@ type PushItemRequest struct {
 	// <br />Format: datasources/{source_id}/connectors/{ID}
 	ConnectorName string `json:"connectorName,omitempty"`
 
+	// DebugOptions: Common debug options.
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
+
 	// Item: Item to push onto the queue.
 	Item *PushItem `json:"item,omitempty"`
 
@@ -4057,9 +4095,11 @@ func (s *QueryInterpretation) MarshalJSON() ([]byte, error) {
 
 // QueryInterpretationOptions: Options to interpret user query.
 type QueryInterpretationOptions struct {
-	// DisableNlInterpretation: Flag to disable query parsing. Default is
-	// false, Set to true to disable
-	// query interpretation.
+	// DisableNlInterpretation: Flag to disable natural language (NL)
+	// interpretation of queries. Default is
+	// false, Set to true to disable natural language interpretation.
+	// NL
+	// interpretation only applies to predefined datasources.
 	DisableNlInterpretation bool `json:"disableNlInterpretation,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g.
@@ -4240,35 +4280,6 @@ func (s *QuerySource) MarshalJSON() ([]byte, error) {
 type QuerySuggestion struct {
 }
 
-// Range: The range of values [start, end) for which faceting is applied
-type Range struct {
-	End *Value `json:"end,omitempty"`
-
-	Start *Value `json:"start,omitempty"`
-
-	// ForceSendFields is a list of field names (e.g. "End") to
-	// unconditionally include in API requests. By default, fields with
-	// empty values are omitted from API requests. However, any non-pointer,
-	// non-interface field appearing in ForceSendFields will be sent to the
-	// server regardless of whether the field is empty or not. This may be
-	// used to include empty fields in Patch requests.
-	ForceSendFields []string `json:"-"`
-
-	// NullFields is a list of field names (e.g. "End") to include in API
-	// requests with the JSON null value. By default, fields with empty
-	// values are omitted from API requests. However, any field with an
-	// empty value appearing in NullFields will be sent to the server as
-	// null. It is an error if a field in this list has a non-empty value.
-	// This may be used to include null fields in Patch requests.
-	NullFields []string `json:"-"`
-}
-
-func (s *Range) MarshalJSON() ([]byte, error) {
-	type NoMethod Range
-	raw := NoMethod(*s)
-	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
-}
-
 // RepositoryError: Errors when the connector is communicating to the
 // source repository.
 type RepositoryError struct {
@@ -4326,6 +4337,9 @@ func (s *RepositoryError) MarshalJSON() ([]byte, error) {
 
 // RequestOptions: Shared request options for all RPC methods.
 type RequestOptions struct {
+	// DebugOptions: Debug options of the request
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
+
 	// LanguageCode: The BCP-47 language code, such as "en-US" or
 	// "sr-Latn".
 	// For more information,
@@ -4339,12 +4353,18 @@ type RequestOptions struct {
 	// SearchApplicationsService.
 	SearchApplicationId string `json:"searchApplicationId,omitempty"`
 
-	// TimeZone: Searcher canonical timezone id. For the list of canonical
-	// time zone IDs see
-	// google3/i18n/identifiers/data/timezones.txt.
+	// TimeZone: Current user's time zone id, such as "America/Los_Angeles"
+	// or
+	// "Australia/Sydney". These IDs are defined by
+	// [Unicode Common Locale Data Repository
+	// (CLDR)](http://cldr.unicode.org/)
+	// project, and currently available in the
+	// file
+	// [timezone.xml](http://unicode.org/repos/cldr/trunk/common/bcp47/t
+	// imezone.xml)
 	TimeZone string `json:"timeZone,omitempty"`
 
-	// ForceSendFields is a list of field names (e.g. "LanguageCode") to
+	// ForceSendFields is a list of field names (e.g. "DebugOptions") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
 	// non-interface field appearing in ForceSendFields will be sent to the
@@ -4352,7 +4372,7 @@ type RequestOptions struct {
 	// used to include empty fields in Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g. "LanguageCode") to include
+	// NullFields is a list of field names (e.g. "DebugOptions") to include
 	// in API requests with the JSON null value. By default, fields with
 	// empty values are omitted from API requests. However, any field with
 	// an empty value appearing in NullFields will be sent to the server as
@@ -4368,6 +4388,30 @@ func (s *RequestOptions) MarshalJSON() ([]byte, error) {
 }
 
 type ResetSearchApplicationRequest struct {
+	// DebugOptions: Common debug options.
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
+
+	// ForceSendFields is a list of field names (e.g. "DebugOptions") to
+	// unconditionally include in API requests. By default, fields with
+	// empty values are omitted from API requests. However, any non-pointer,
+	// non-interface field appearing in ForceSendFields will be sent to the
+	// server regardless of whether the field is empty or not. This may be
+	// used to include empty fields in Patch requests.
+	ForceSendFields []string `json:"-"`
+
+	// NullFields is a list of field names (e.g. "DebugOptions") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
+	// null. It is an error if a field in this list has a non-empty value.
+	// This may be used to include null fields in Patch requests.
+	NullFields []string `json:"-"`
+}
+
+func (s *ResetSearchApplicationRequest) MarshalJSON() ([]byte, error) {
+	type NoMethod ResetSearchApplicationRequest
+	raw := NoMethod(*s)
+	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
 // ResponseDebugInfo: Debugging information about the response.
@@ -4604,8 +4648,7 @@ type RetrievalImportance struct {
 	//   "LOW" - Treat the match with lower importance than body text.
 	//   "NONE" - Do not match against this field during retrieval. The
 	// property can still
-	// be used for operator matching, sorting, faceting, and suggest
-	// if
+	// be used for operator matching, faceting, and suggest if
 	// desired.
 	Importance string `json:"importance,omitempty"`
 
@@ -4640,7 +4683,10 @@ type Schema struct {
 	ObjectDefinitions []*ObjectDefinition `json:"objectDefinitions,omitempty"`
 
 	// OperationIds: IDs of the Long Running Operations (LROs) currently
-	// running for this schema.
+	// running for this
+	// schema. After modifying the schema, wait for opeations to
+	// complete
+	// before indexing additional content.
 	OperationIds []string `json:"operationIds,omitempty"`
 
 	// ServerResponse contains the HTTP response code and headers from the
@@ -4714,7 +4760,7 @@ func (s *ScoringConfig) MarshalJSON() ([]byte, error) {
 type SearchApplication struct {
 	// DataSourceRestrictions: Retrictions applied to the
 	// configurations.
-	// The maximum number of elements is 100.
+	// The maximum number of elements is 10.
 	DataSourceRestrictions []*DataSourceRestriction `json:"dataSourceRestrictions,omitempty"`
 
 	// DefaultFacetOptions: The default fields for returning facet
@@ -4778,10 +4824,11 @@ func (s *SearchApplication) MarshalJSON() ([]byte, error) {
 	return gensupport.MarshalJSON(raw, s.ForceSendFields, s.NullFields)
 }
 
-// SearchQualityMetadata: Search Quality metadata of the item.
+// SearchQualityMetadata: Additional search quality metadata of the
+// item.
 type SearchQualityMetadata struct {
 	// Quality: An indication of the quality of the item, used to influence
-	// Search quality.
+	// search quality.
 	// Value should be between 0.0 (lowest quality) and 1.0 (highest
 	// quality).
 	Quality float64 `json:"quality,omitempty"`
@@ -4825,8 +4872,9 @@ func (s *SearchQualityMetadata) UnmarshalJSON(data []byte) error {
 
 // SearchRequest: The search API request.
 type SearchRequest struct {
-	// DataSourceRestrictions: The sources to use for querying.
-	// The default empty array retrieves results from all indexed sources.
+	// DataSourceRestrictions: The sources to use for querying. If not
+	// specified, all data sources
+	// from the current search application are used.
 	DataSourceRestrictions []*DataSourceRestriction `json:"dataSourceRestrictions,omitempty"`
 
 	FacetOptions []*FacetOptions `json:"facetOptions,omitempty"`
@@ -4848,7 +4896,8 @@ type SearchRequest struct {
 	// QueryInterpretationOptions: Options to interpret the user query.
 	QueryInterpretationOptions *QueryInterpretationOptions `json:"queryInterpretationOptions,omitempty"`
 
-	// RequestOptions: Request options.
+	// RequestOptions: Request options, such as the search application and
+	// user timezone.
 	RequestOptions *RequestOptions `json:"requestOptions,omitempty"`
 
 	// SortOptions: The options for sorting the search results
@@ -5035,8 +5084,10 @@ func (s *Snippet) MarshalJSON() ([]byte, error) {
 }
 
 type SortOptions struct {
-	// OperatorName: Name of the operator corresponding to the field(s) to
-	// sort on
+	// OperatorName: Name of the operator corresponding to the field to sort
+	// on.
+	// The corresponding property must be marked as
+	// sortable.
 	OperatorName string `json:"operatorName,omitempty"`
 
 	// SortOrder: Ascending is the default sort order
@@ -5322,6 +5373,9 @@ type StartUploadItemRequest struct {
 	// <br />Format: datasources/{source_id}/connectors/{ID}
 	ConnectorName string `json:"connectorName,omitempty"`
 
+	// DebugOptions: Common debug options.
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
+
 	// ForceSendFields is a list of field names (e.g. "ConnectorName") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
@@ -5524,16 +5578,16 @@ func (s *StructuredResult) MarshalJSON() ([]byte, error) {
 
 // SuggestRequest: Request of suggest API.
 type SuggestRequest struct {
-	// DataSourceRestrictions: The sources to use for suggestions.
-	// The default empty array retrieves suggestions from all applicable
-	// sources.
+	// DataSourceRestrictions: The sources to use for suggestions. If not
+	// specified, all data sources
+	// from the current search application are used.
 	DataSourceRestrictions []*DataSourceRestriction `json:"dataSourceRestrictions,omitempty"`
 
 	// Query: Partial query for the completion suggestion.
 	Query string `json:"query,omitempty"`
 
-	// RequestOptions: Request options, such as image options for people
-	// info and thumbnails.
+	// RequestOptions: Request options, such as the search application and
+	// user timezone.
 	RequestOptions *RequestOptions `json:"requestOptions,omitempty"`
 
 	// ForceSendFields is a list of field names (e.g.
@@ -5955,6 +6009,9 @@ type UnreserveItemsRequest struct {
 	// <br />Format: datasources/{source_id}/connectors/{ID}
 	ConnectorName string `json:"connectorName,omitempty"`
 
+	// DebugOptions: Common debug options.
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
+
 	// Queue: Name of a queue to unreserve items from.
 	Queue string `json:"queue,omitempty"`
 
@@ -5982,9 +6039,12 @@ func (s *UnreserveItemsRequest) MarshalJSON() ([]byte, error) {
 }
 
 type UpdateDataSourceRequest struct {
+	// DebugOptions: Common debug options.
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
+
 	Source *DataSource `json:"source,omitempty"`
 
-	// ForceSendFields is a list of field names (e.g. "Source") to
+	// ForceSendFields is a list of field names (e.g. "DebugOptions") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
 	// non-interface field appearing in ForceSendFields will be sent to the
@@ -5992,10 +6052,10 @@ type UpdateDataSourceRequest struct {
 	// used to include empty fields in Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g. "Source") to include in API
-	// requests with the JSON null value. By default, fields with empty
-	// values are omitted from API requests. However, any field with an
-	// empty value appearing in NullFields will be sent to the server as
+	// NullFields is a list of field names (e.g. "DebugOptions") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
 	// null. It is an error if a field in this list has a non-empty value.
 	// This may be used to include null fields in Patch requests.
 	NullFields []string `json:"-"`
@@ -6008,6 +6068,9 @@ func (s *UpdateDataSourceRequest) MarshalJSON() ([]byte, error) {
 }
 
 type UpdateSchemaRequest struct {
+	// DebugOptions: Common debug options.
+	DebugOptions *DebugOptions `json:"debugOptions,omitempty"`
+
 	// Schema: The new schema for the source.
 	Schema *Schema `json:"schema,omitempty"`
 
@@ -6015,7 +6078,7 @@ type UpdateSchemaRequest struct {
 	// effects.
 	ValidateOnly bool `json:"validateOnly,omitempty"`
 
-	// ForceSendFields is a list of field names (e.g. "Schema") to
+	// ForceSendFields is a list of field names (e.g. "DebugOptions") to
 	// unconditionally include in API requests. By default, fields with
 	// empty values are omitted from API requests. However, any non-pointer,
 	// non-interface field appearing in ForceSendFields will be sent to the
@@ -6023,10 +6086,10 @@ type UpdateSchemaRequest struct {
 	// used to include empty fields in Patch requests.
 	ForceSendFields []string `json:"-"`
 
-	// NullFields is a list of field names (e.g. "Schema") to include in API
-	// requests with the JSON null value. By default, fields with empty
-	// values are omitted from API requests. However, any field with an
-	// empty value appearing in NullFields will be sent to the server as
+	// NullFields is a list of field names (e.g. "DebugOptions") to include
+	// in API requests with the JSON null value. By default, fields with
+	// empty values are omitted from API requests. However, any field with
+	// an empty value appearing in NullFields will be sent to the server as
 	// null. It is an error if a field in this list has a non-empty value.
 	// This may be used to include null fields in Patch requests.
 	NullFields []string `json:"-"`
@@ -6800,6 +6863,15 @@ func (r *IndexingDatasourcesService) DeleteSchema(name string) *IndexingDatasour
 	return c
 }
 
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *IndexingDatasourcesDeleteSchemaCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *IndexingDatasourcesDeleteSchemaCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
+	return c
+}
+
 // Fields allows partial responses to be retrieved. See
 // https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
 // for more information.
@@ -6889,6 +6961,11 @@ func (c *IndexingDatasourcesDeleteSchemaCall) Do(opts ...googleapi.CallOption) (
 	//     "name"
 	//   ],
 	//   "parameters": {
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "name": {
 	//       "description": "Name of the data source to delete Schema.  Format:\ndatasources/{source_id}",
 	//       "location": "path",
@@ -6925,6 +7002,15 @@ type IndexingDatasourcesGetSchemaCall struct {
 func (r *IndexingDatasourcesService) GetSchema(name string) *IndexingDatasourcesGetSchemaCall {
 	c := &IndexingDatasourcesGetSchemaCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
+	return c
+}
+
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *IndexingDatasourcesGetSchemaCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *IndexingDatasourcesGetSchemaCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
 	return c
 }
 
@@ -7030,6 +7116,11 @@ func (c *IndexingDatasourcesGetSchemaCall) Do(opts ...googleapi.CallOption) (*Sc
 	//     "name"
 	//   ],
 	//   "parameters": {
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "name": {
 	//       "description": "Name of the data source to get Schema.  Format:\ndatasources/{source_id}",
 	//       "location": "path",
@@ -7214,6 +7305,15 @@ func (c *IndexingDatasourcesItemsDeleteCall) ConnectorName(connectorName string)
 	return c
 }
 
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *IndexingDatasourcesItemsDeleteCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *IndexingDatasourcesItemsDeleteCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
+	return c
+}
+
 // Mode sets the optional parameter "mode": Required. The RequestMode
 // for this request.
 //
@@ -7334,6 +7434,11 @@ func (c *IndexingDatasourcesItemsDeleteCall) Do(opts ...googleapi.CallOption) (*
 	//       "description": "Name of connector making this call.\n\u003cbr /\u003eFormat: datasources/{source_id}/connectors/{ID}",
 	//       "location": "query",
 	//       "type": "string"
+	//     },
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
 	//     },
 	//     "mode": {
 	//       "description": "Required. The RequestMode for this request.",
@@ -7535,6 +7640,15 @@ func (c *IndexingDatasourcesItemsGetCall) ConnectorName(connectorName string) *I
 	return c
 }
 
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *IndexingDatasourcesItemsGetCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *IndexingDatasourcesItemsGetCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
+	return c
+}
+
 // Fields allows partial responses to be retrieved. See
 // https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
 // for more information.
@@ -7641,6 +7755,11 @@ func (c *IndexingDatasourcesItemsGetCall) Do(opts ...googleapi.CallOption) (*Ite
 	//       "description": "Name of connector making this call.\n\u003cbr /\u003eFormat: datasources/{source_id}/connectors/{ID}",
 	//       "location": "query",
 	//       "type": "string"
+	//     },
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
 	//     },
 	//     "name": {
 	//       "description": "Name of the item to get info.\nFormat: datasources/{source_id}/items/{item_id}",
@@ -7845,6 +7964,15 @@ func (c *IndexingDatasourcesItemsListCall) ConnectorName(connectorName string) *
 	return c
 }
 
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *IndexingDatasourcesItemsListCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *IndexingDatasourcesItemsListCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
+	return c
+}
+
 // PageSize sets the optional parameter "pageSize": Maximum number of
 // items to fetch in a request.
 // The max value is 1000 when brief is true.  The max value is 10 if
@@ -7860,34 +7988,6 @@ func (c *IndexingDatasourcesItemsListCall) PageSize(pageSize int64) *IndexingDat
 // next_page_token value returned from a previous List request, if any.
 func (c *IndexingDatasourcesItemsListCall) PageToken(pageToken string) *IndexingDatasourcesItemsListCall {
 	c.urlParams_.Set("pageToken", pageToken)
-	return c
-}
-
-// SelectCode sets the optional parameter "selectCode": Limit item to
-// this processing error.
-//
-// Possible values:
-//   "PROCESSING_ERROR_CODE_UNSPECIFIED"
-//   "MALFORMED_REQUEST"
-//   "UNSUPPORTED_CONTENT_FORMAT"
-//   "INDIRECT_BROKEN_ACL"
-//   "ACL_CYCLE"
-func (c *IndexingDatasourcesItemsListCall) SelectCode(selectCode string) *IndexingDatasourcesItemsListCall {
-	c.urlParams_.Set("selectCode", selectCode)
-	return c
-}
-
-// SelectStatusCode sets the optional parameter "selectStatusCode":
-// Limit item selection to this status.
-//
-// Possible values:
-//   "CODE_UNSPECIFIED"
-//   "ERROR"
-//   "MODIFIED"
-//   "NEW_ITEM"
-//   "ACCEPTED"
-func (c *IndexingDatasourcesItemsListCall) SelectStatusCode(selectStatusCode string) *IndexingDatasourcesItemsListCall {
-	c.urlParams_.Set("selectStatusCode", selectStatusCode)
 	return c
 }
 
@@ -8003,6 +8103,11 @@ func (c *IndexingDatasourcesItemsListCall) Do(opts ...googleapi.CallOption) (*Li
 	//       "location": "query",
 	//       "type": "string"
 	//     },
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "name": {
 	//       "description": "Name of the Data Source to list Items.  Format:\ndatasources/{source_id}",
 	//       "location": "path",
@@ -8018,30 +8123,6 @@ func (c *IndexingDatasourcesItemsListCall) Do(opts ...googleapi.CallOption) (*Li
 	//     },
 	//     "pageToken": {
 	//       "description": "The next_page_token value returned from a previous List request, if any.",
-	//       "location": "query",
-	//       "type": "string"
-	//     },
-	//     "selectCode": {
-	//       "description": "Limit item to this processing error.",
-	//       "enum": [
-	//         "PROCESSING_ERROR_CODE_UNSPECIFIED",
-	//         "MALFORMED_REQUEST",
-	//         "UNSUPPORTED_CONTENT_FORMAT",
-	//         "INDIRECT_BROKEN_ACL",
-	//         "ACL_CYCLE"
-	//       ],
-	//       "location": "query",
-	//       "type": "string"
-	//     },
-	//     "selectStatusCode": {
-	//       "description": "Limit item selection to this status.",
-	//       "enum": [
-	//         "CODE_UNSPECIFIED",
-	//         "ERROR",
-	//         "MODIFIED",
-	//         "NEW_ITEM",
-	//         "ACCEPTED"
-	//       ],
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -8669,8 +8750,24 @@ type MediaUploadCall struct {
 	header_      http.Header
 }
 
-// Upload: Uploads media. Upload is supported on
-// the URI `/upload/v1/media/{+name}`.
+// Upload: Uploads media for indexing.
+//
+// The upload endpoint supports direct and resumable upload protocols
+// and
+// is intended for large items that can not be inlined during index
+// requests. To
+// index large content:
+//
+// 1. Call upload to begin
+//    a session and get the item reference.
+// 1. Upload the content using the item reference's resource name.
+// 1. Call index with the item
+//    reference as the content.
+//
+// For additional information, see
+// [Create a content connector using the REST
+// API](https://developers.google.com/cloud-search/docs/guides/content-co
+// nnector#rest).
 func (r *MediaService) Upload(resourceName string, media *Media) *MediaUploadCall {
 	c := &MediaUploadCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.resourceName = resourceName
@@ -8831,7 +8928,7 @@ func (c *MediaUploadCall) Do(opts ...googleapi.CallOption) (*Media, error) {
 	}
 	return ret, nil
 	// {
-	//   "description": "Uploads media. Upload is supported on\nthe URI `/upload/v1/media/{+name}`.",
+	//   "description": "Uploads media for indexing.\n\nThe upload endpoint supports direct and resumable upload protocols and\nis intended for large items that can not be inlined during index requests. To\nindex large content:\n\n1. Call upload to begin\n   a session and get the item reference.\n1. Upload the content using the item reference's resource name.\n1. Call index with the item\n   reference as the content.\n\nFor additional information, see\n[Create a content connector using the REST API](https://developers.google.com/cloud-search/docs/guides/content-connector#rest).",
 	//   "flatPath": "v1/media/{mediaId}",
 	//   "httpMethod": "POST",
 	//   "id": "cloudsearch.media.upload",
@@ -9294,6 +9391,15 @@ func (c *QuerySourcesListCall) PageToken(pageToken string) *QuerySourcesListCall
 	return c
 }
 
+// RequestOptionsDebugOptionsEnableDebugging sets the optional parameter
+// "requestOptions.debugOptions.enableDebugging": If set, the request
+// will enable debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *QuerySourcesListCall) RequestOptionsDebugOptionsEnableDebugging(requestOptionsDebugOptionsEnableDebugging bool) *QuerySourcesListCall {
+	c.urlParams_.Set("requestOptions.debugOptions.enableDebugging", fmt.Sprint(requestOptionsDebugOptionsEnableDebugging))
+	return c
+}
+
 // RequestOptionsLanguageCode sets the optional parameter
 // "requestOptions.languageCode": The BCP-47 language code, such as
 // "en-US" or "sr-Latn".
@@ -9316,10 +9422,15 @@ func (c *QuerySourcesListCall) RequestOptionsSearchApplicationId(requestOptionsS
 }
 
 // RequestOptionsTimeZone sets the optional parameter
-// "requestOptions.timeZone": Searcher canonical timezone id. For the
-// list of canonical time zone IDs
-// see
-// google3/i18n/identifiers/data/timezones.txt.
+// "requestOptions.timeZone": Current user's time zone id, such as
+// "America/Los_Angeles" or
+// "Australia/Sydney". These IDs are defined by
+// [Unicode Common Locale Data Repository
+// (CLDR)](http://cldr.unicode.org/)
+// project, and currently available in the
+// file
+// [timezone.xml](http://unicode.org/repos/cldr/trunk/common/bcp47/t
+// imezone.xml)
 func (c *QuerySourcesListCall) RequestOptionsTimeZone(requestOptionsTimeZone string) *QuerySourcesListCall {
 	c.urlParams_.Set("requestOptions.timeZone", requestOptionsTimeZone)
 	return c
@@ -9427,6 +9538,11 @@ func (c *QuerySourcesListCall) Do(opts ...googleapi.CallOption) (*ListQuerySourc
 	//       "location": "query",
 	//       "type": "string"
 	//     },
+	//     "requestOptions.debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "requestOptions.languageCode": {
 	//       "description": "The BCP-47 language code, such as \"en-US\" or \"sr-Latn\".\nFor more information, see\nhttp://www.unicode.org/reports/tr35/#Unicode_locale_identifier.\nFor translations.",
 	//       "location": "query",
@@ -9438,7 +9554,7 @@ func (c *QuerySourcesListCall) Do(opts ...googleapi.CallOption) (*ListQuerySourc
 	//       "type": "string"
 	//     },
 	//     "requestOptions.timeZone": {
-	//       "description": "Searcher canonical timezone id. For the list of canonical time zone IDs see\ngoogle3/i18n/identifiers/data/timezones.txt.",
+	//       "description": "Current user's time zone id, such as \"America/Los_Angeles\" or\n\"Australia/Sydney\". These IDs are defined by\n[Unicode Common Locale Data Repository (CLDR)](http://cldr.unicode.org/)\nproject, and currently available in the file\n[timezone.xml](http://unicode.org/repos/cldr/trunk/common/bcp47/timezone.xml)",
 	//       "location": "query",
 	//       "type": "string"
 	//     }
@@ -9615,6 +9731,15 @@ func (r *SettingsDatasourcesService) Delete(name string) *SettingsDatasourcesDel
 	return c
 }
 
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *SettingsDatasourcesDeleteCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *SettingsDatasourcesDeleteCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
+	return c
+}
+
 // Fields allows partial responses to be retrieved. See
 // https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
 // for more information.
@@ -9704,6 +9829,11 @@ func (c *SettingsDatasourcesDeleteCall) Do(opts ...googleapi.CallOption) (*Opera
 	//     "name"
 	//   ],
 	//   "parameters": {
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "name": {
 	//       "description": "Name of the data source.\nFormat: datasources/{source_id}.",
 	//       "location": "path",
@@ -9740,6 +9870,15 @@ type SettingsDatasourcesGetCall struct {
 func (r *SettingsDatasourcesService) Get(name string) *SettingsDatasourcesGetCall {
 	c := &SettingsDatasourcesGetCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
+	return c
+}
+
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *SettingsDatasourcesGetCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *SettingsDatasourcesGetCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
 	return c
 }
 
@@ -9845,6 +9984,11 @@ func (c *SettingsDatasourcesGetCall) Do(opts ...googleapi.CallOption) (*DataSour
 	//     "name"
 	//   ],
 	//   "parameters": {
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "name": {
 	//       "description": "Name of the data source resource.\nFormat: datasources/{source_id}.",
 	//       "location": "path",
@@ -9879,6 +10023,15 @@ type SettingsDatasourcesListCall struct {
 // List: Lists data sources.
 func (r *SettingsDatasourcesService) List() *SettingsDatasourcesListCall {
 	c := &SettingsDatasourcesListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	return c
+}
+
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *SettingsDatasourcesListCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *SettingsDatasourcesListCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
 	return c
 }
 
@@ -9995,6 +10148,11 @@ func (c *SettingsDatasourcesListCall) Do(opts ...googleapi.CallOption) (*ListDat
 	//   "id": "cloudsearch.settings.datasources.list",
 	//   "parameterOrder": [],
 	//   "parameters": {
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "pageSize": {
 	//       "description": "Maximum number of data sources to fetch in a request.\nThe max value is 100.\n\u003cbr /\u003eThe default value is 10",
 	//       "format": "int32",
@@ -10317,6 +10475,15 @@ func (r *SettingsSearchapplicationsService) Delete(name string) *SettingsSearcha
 	return c
 }
 
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *SettingsSearchapplicationsDeleteCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *SettingsSearchapplicationsDeleteCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
+	return c
+}
+
 // Fields allows partial responses to be retrieved. See
 // https://developers.google.com/gdata/docs/2.0/basics#PartialResponse
 // for more information.
@@ -10406,6 +10573,11 @@ func (c *SettingsSearchapplicationsDeleteCall) Do(opts ...googleapi.CallOption) 
 	//     "name"
 	//   ],
 	//   "parameters": {
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "name": {
 	//       "description": "The name of the search application to be deleted.\n\u003cbr /\u003eFormat: applications/{application_id}.",
 	//       "location": "path",
@@ -10442,6 +10614,15 @@ type SettingsSearchapplicationsGetCall struct {
 func (r *SettingsSearchapplicationsService) Get(name string) *SettingsSearchapplicationsGetCall {
 	c := &SettingsSearchapplicationsGetCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
+	return c
+}
+
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *SettingsSearchapplicationsGetCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *SettingsSearchapplicationsGetCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
 	return c
 }
 
@@ -10547,6 +10728,11 @@ func (c *SettingsSearchapplicationsGetCall) Do(opts ...googleapi.CallOption) (*S
 	//     "name"
 	//   ],
 	//   "parameters": {
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "name": {
 	//       "description": "Name of the search application.\n\u003cbr /\u003eFormat: applications/{application_id}.",
 	//       "location": "path",
@@ -10581,6 +10767,15 @@ type SettingsSearchapplicationsListCall struct {
 // List: Lists all search applications.
 func (r *SettingsSearchapplicationsService) List() *SettingsSearchapplicationsListCall {
 	c := &SettingsSearchapplicationsListCall{s: r.s, urlParams_: make(gensupport.URLParams)}
+	return c
+}
+
+// DebugOptionsEnableDebugging sets the optional parameter
+// "debugOptions.enableDebugging": If set, the request will enable
+// debugging features of Cloud Search.
+// Only turn on this field, if asked by Google to help with debugging.
+func (c *SettingsSearchapplicationsListCall) DebugOptionsEnableDebugging(debugOptionsEnableDebugging bool) *SettingsSearchapplicationsListCall {
+	c.urlParams_.Set("debugOptions.enableDebugging", fmt.Sprint(debugOptionsEnableDebugging))
 	return c
 }
 
@@ -10697,6 +10892,11 @@ func (c *SettingsSearchapplicationsListCall) Do(opts ...googleapi.CallOption) (*
 	//   "id": "cloudsearch.settings.searchapplications.list",
 	//   "parameterOrder": [],
 	//   "parameters": {
+	//     "debugOptions.enableDebugging": {
+	//       "description": "If set, the request will enable debugging features of Cloud Search.\nOnly turn on this field, if asked by Google to help with debugging.",
+	//       "location": "query",
+	//       "type": "boolean"
+	//     },
 	//     "pageSize": {
 	//       "description": "The maximum number of items to return.",
 	//       "format": "int32",
@@ -11029,7 +11229,8 @@ type StatsGetIndexCall struct {
 	header_      http.Header
 }
 
-// GetIndex: Get the index statistics for customer
+// GetIndex: Gets indexed item statistics aggreggated across all data
+// sources.
 func (r *StatsService) GetIndex() *StatsGetIndexCall {
 	c := &StatsGetIndexCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	return c
@@ -11043,8 +11244,7 @@ func (c *StatsGetIndexCall) FromDateDay(fromDateDay int64) *StatsGetIndexCall {
 }
 
 // FromDateMonth sets the optional parameter "fromDate.month": Month of
-// year. Must be from 1 to 12, or 0 if specifying a year without a
-// month and day.
+// date. Must be from 1 to 12.
 func (c *StatsGetIndexCall) FromDateMonth(fromDateMonth int64) *StatsGetIndexCall {
 	c.urlParams_.Set("fromDate.month", fmt.Sprint(fromDateMonth))
 	return c
@@ -11065,8 +11265,7 @@ func (c *StatsGetIndexCall) ToDateDay(toDateDay int64) *StatsGetIndexCall {
 }
 
 // ToDateMonth sets the optional parameter "toDate.month": Month of
-// year. Must be from 1 to 12, or 0 if specifying a year without a
-// month and day.
+// date. Must be from 1 to 12.
 func (c *StatsGetIndexCall) ToDateMonth(toDateMonth int64) *StatsGetIndexCall {
 	c.urlParams_.Set("toDate.month", fmt.Sprint(toDateMonth))
 	return c
@@ -11170,7 +11369,7 @@ func (c *StatsGetIndexCall) Do(opts ...googleapi.CallOption) (*GetCustomerIndexS
 	}
 	return ret, nil
 	// {
-	//   "description": "Get the index statistics for customer",
+	//   "description": "Gets indexed item statistics aggreggated across all data sources.",
 	//   "flatPath": "v1/stats/index",
 	//   "httpMethod": "GET",
 	//   "id": "cloudsearch.stats.getIndex",
@@ -11183,7 +11382,7 @@ func (c *StatsGetIndexCall) Do(opts ...googleapi.CallOption) (*GetCustomerIndexS
 	//       "type": "integer"
 	//     },
 	//     "fromDate.month": {
-	//       "description": "Month of year. Must be from 1 to 12, or 0 if specifying a year without a\nmonth and day.",
+	//       "description": "Month of date. Must be from 1 to 12.",
 	//       "format": "int32",
 	//       "location": "query",
 	//       "type": "integer"
@@ -11201,7 +11400,7 @@ func (c *StatsGetIndexCall) Do(opts ...googleapi.CallOption) (*GetCustomerIndexS
 	//       "type": "integer"
 	//     },
 	//     "toDate.month": {
-	//       "description": "Month of year. Must be from 1 to 12, or 0 if specifying a year without a\nmonth and day.",
+	//       "description": "Month of date. Must be from 1 to 12.",
 	//       "format": "int32",
 	//       "location": "query",
 	//       "type": "integer"
@@ -11237,7 +11436,7 @@ type StatsIndexDatasourcesGetCall struct {
 	header_      http.Header
 }
 
-// Get: Gets the index statistics for data source
+// Get: Gets indexed item statistics for a single data source.
 func (r *StatsIndexDatasourcesService) Get(name string) *StatsIndexDatasourcesGetCall {
 	c := &StatsIndexDatasourcesGetCall{s: r.s, urlParams_: make(gensupport.URLParams)}
 	c.name = name
@@ -11252,8 +11451,7 @@ func (c *StatsIndexDatasourcesGetCall) FromDateDay(fromDateDay int64) *StatsInde
 }
 
 // FromDateMonth sets the optional parameter "fromDate.month": Month of
-// year. Must be from 1 to 12, or 0 if specifying a year without a
-// month and day.
+// date. Must be from 1 to 12.
 func (c *StatsIndexDatasourcesGetCall) FromDateMonth(fromDateMonth int64) *StatsIndexDatasourcesGetCall {
 	c.urlParams_.Set("fromDate.month", fmt.Sprint(fromDateMonth))
 	return c
@@ -11274,8 +11472,7 @@ func (c *StatsIndexDatasourcesGetCall) ToDateDay(toDateDay int64) *StatsIndexDat
 }
 
 // ToDateMonth sets the optional parameter "toDate.month": Month of
-// year. Must be from 1 to 12, or 0 if specifying a year without a
-// month and day.
+// date. Must be from 1 to 12.
 func (c *StatsIndexDatasourcesGetCall) ToDateMonth(toDateMonth int64) *StatsIndexDatasourcesGetCall {
 	c.urlParams_.Set("toDate.month", fmt.Sprint(toDateMonth))
 	return c
@@ -11382,7 +11579,7 @@ func (c *StatsIndexDatasourcesGetCall) Do(opts ...googleapi.CallOption) (*GetDat
 	}
 	return ret, nil
 	// {
-	//   "description": "Gets the index statistics for data source",
+	//   "description": "Gets indexed item statistics for a single data source.",
 	//   "flatPath": "v1/stats/index/datasources/{datasourcesId}",
 	//   "httpMethod": "GET",
 	//   "id": "cloudsearch.stats.index.datasources.get",
@@ -11397,7 +11594,7 @@ func (c *StatsIndexDatasourcesGetCall) Do(opts ...googleapi.CallOption) (*GetDat
 	//       "type": "integer"
 	//     },
 	//     "fromDate.month": {
-	//       "description": "Month of year. Must be from 1 to 12, or 0 if specifying a year without a\nmonth and day.",
+	//       "description": "Month of date. Must be from 1 to 12.",
 	//       "format": "int32",
 	//       "location": "query",
 	//       "type": "integer"
@@ -11409,7 +11606,7 @@ func (c *StatsIndexDatasourcesGetCall) Do(opts ...googleapi.CallOption) (*GetDat
 	//       "type": "integer"
 	//     },
 	//     "name": {
-	//       "description": "The resource id of the data source index stats, in the following format:\ndatasources/{source_id}",
+	//       "description": "The resource id of the data source to retrieve statistics for,\nin the following format: \"datasources/{source_id}\"",
 	//       "location": "path",
 	//       "pattern": "^datasources/[^/]+$",
 	//       "required": true,
@@ -11422,7 +11619,7 @@ func (c *StatsIndexDatasourcesGetCall) Do(opts ...googleapi.CallOption) (*GetDat
 	//       "type": "integer"
 	//     },
 	//     "toDate.month": {
-	//       "description": "Month of year. Must be from 1 to 12, or 0 if specifying a year without a\nmonth and day.",
+	//       "description": "Month of date. Must be from 1 to 12.",
 	//       "format": "int32",
 	//       "location": "query",
 	//       "type": "integer"
